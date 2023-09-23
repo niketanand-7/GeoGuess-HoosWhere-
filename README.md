@@ -1,7 +1,8 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/xHnRfY9D)
-# Django Practice Assessment
+# CS 3240 Team B-24 Geocaching App
+We are developing a competitive forum for users to guess locations posted by other users around grounds with limited information, with an active points leaderboard. 
 
-__Name:__
+__Name:__ Kyle Tran, 
 
-__Computing ID:__
+__Computing ID:__ yzn3hv, 
 
