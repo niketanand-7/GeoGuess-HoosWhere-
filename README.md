@@ -2,7 +2,7 @@
 # CS 3240 Team B-24 Geo-guessing App
 We are developing a competitive forum for users to guess locations posted by other users around grounds with limited information, with an active points leaderboard. 
 
-__Name:__ Kyle Tran, Ravi Jayaraman
+__Name:__ Kyle Tran, Ravi Jayaraman, Niket Anand
 
-__Computing ID:__ yzn3hv, spy7sw
+__Computing ID:__ yzn3hv, spy7sw, fcj9vk
 
