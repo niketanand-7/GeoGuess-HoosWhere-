@@ -1,0 +1,45 @@
+{% extends 'base.html' %} {% load socialaccount %}
+
+{% block content %}
+
+<div class="container" style="text-align: center; padding-top: 10%;">
+  <h1>GeoGuess App Login</h1>
+
+  <br /><br />
+
+  {% if user.is_authenticated %}
+  <figure class="bg-gray-100 rounded-xl p-8">
+                    <img class="w-32 h-32 rounded-full mx-auto" src="{{ user.socialaccount_set.all.0.get_avatar_url }}"
+                        alt="" width="384" height="512">
+                    <div class="pt-6 text-center md:text-left space-y-4">
+                        <blockquote>
+                            <p class="text-lg font-semibold">
+                                You are signed in!
+                            </p>
+                        </blockquote>
+                        <figcaption class="font-medium">
+                            <div class="text-cyan-600">
+                                Welcome {{ user.socialaccount_set.all.0.extra_data.name }}!
+                            </div>
+                            <div class="text-gray-500">
+                                Email: {{ user.email }}
+                            </div>
+                        </figcaption>
+                    </div>
+                </figure>
+    <a href="{% url 'account_logout' %}" class="btn btn-danger">Logout</a>
+  {% else %}
+    <!-- Google button starts here -->
+    <a href="{% provider_login_url 'google' %}" class="btn btn-secondary">
+      <i class="fa fa-google fa-fw"></i>
+      <span>Login with Google</span>
+    </a>
+    <!-- Google button ends here -->
+  {% endif %}
+</div>
+
+{% endblock content %}
+
+<!--Sources:
+https://github.com/mdrhmn/dj-social-auth/blob/master/main/templates/main.html
+https://testdriven.io/blog/django-social-auth/#github-provider -->
