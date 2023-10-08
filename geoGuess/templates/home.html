@@ -1,6 +1,8 @@
-{% extends 'base.html' %} {% load socialaccount %}
+{% extends 'base.html' %}
+{% load socialaccount %}
 
 {% block content %}
+<!-- ... styles ... -->
 
 <div class="container" style="text-align: center; padding-top: 10%;">
   <h1>GeoGuess App Login</h1>
@@ -17,19 +19,6 @@
                                 You are signed in!
                             </p>
                         </blockquote>
-                        {% if user.is_staff %}
-                            <blockquote>
-                            <p class="text-lg font-semibold">
-                                You are an admin!
-                            </p>
-                            </blockquote>
-                        {% else %}
-                            <blockquote>
-                            <p class="text-lg font-semibold">
-                                You are a basic user!
-                            </p>
-                            </blockquote>
-                        {% endif %}
                         <figcaption class="font-medium">
                             <div class="text-cyan-600">
                                 Welcome {{ user.socialaccount_set.all.0.extra_data.name }}!
@@ -48,11 +37,7 @@
       <span>Login with Google</span>
     </a>
     <!-- Google button ends here -->
-{% endif %}
+  {% endif %}
 </div>
 
 {% endblock content %}
-
-<!--Sources:
-https://github.com/mdrhmn/dj-social-auth/blob/master/main/templates/main.html
-https://testdriven.io/blog/django-social-auth/#github-provider -->
