@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import dj_database_url
+
 import secrets
 import os
 
@@ -102,6 +104,8 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+if(IS_HEROKU_APP):
+    DATABASES['default'] =  dj_database_url.config()
 
 
 # Password validation
