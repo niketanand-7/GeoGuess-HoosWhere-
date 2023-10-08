@@ -17,6 +17,19 @@
                                 You are signed in!
                             </p>
                         </blockquote>
+                        {% if user.is_staff %}
+                            <blockquote>
+                            <p class="text-lg font-semibold">
+                                You are an admin!
+                            </p>
+                            </blockquote>
+                        {% else %}
+                            <blockquote>
+                            <p class="text-lg font-semibold">
+                                You are a basic user!
+                            </p>
+                            </blockquote>
+                        {% endif %}
                         <figcaption class="font-medium">
                             <div class="text-cyan-600">
                                 Welcome {{ user.socialaccount_set.all.0.extra_data.name }}!
@@ -35,7 +48,7 @@
       <span>Login with Google</span>
     </a>
     <!-- Google button ends here -->
-  {% endif %}
+{% endif %}
 </div>
 
 {% endblock content %}
