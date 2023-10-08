@@ -1,45 +1,56 @@
-{% extends 'base.html' %} {% load socialaccount %}
+{% extends 'base.html' %}
+{% load socialaccount %}
 
 {% block content %}
+<style>
+  /* Custom styles */
+  .card {
+    border-radius: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
 
-<div class="container" style="text-align: center; padding-top: 10%;">
-  <h1>GeoGuess App Login</h1>
+  .user-icon {
+    border-radius: 50%;
+    border: 3px solid white;
+    width: 80px;
+    height: 80px;
+    display: block;
+    margin: 20px auto 20px; /* increased top margin */
+  }
 
-  <br /><br />
+  .btn-secondary {
+    background-color: #4285F4; /* Google button blue */
+    color: white;
+  }
+</style>
 
-  {% if user.is_authenticated %}
-  <figure class="bg-gray-100 rounded-xl p-8">
-                    <img class="w-32 h-32 rounded-full mx-auto" src="{{ user.socialaccount_set.all.0.get_avatar_url }}"
-                        alt="" width="384" height="512">
-                    <div class="pt-6 text-center md:text-left space-y-4">
-                        <blockquote>
-                            <p class="text-lg font-semibold">
-                                You are signed in!
-                            </p>
-                        </blockquote>
-                        <figcaption class="font-medium">
-                            <div class="text-cyan-600">
-                                Welcome {{ user.socialaccount_set.all.0.extra_data.name }}!
-                            </div>
-                            <div class="text-gray-500">
-                                Email: {{ user.email }}
-                            </div>
-                        </figcaption>
-                    </div>
-                </figure>
-    <a href="{% url 'account_logout' %}" class="btn btn-danger">Logout</a>
-  {% else %}
-    <!-- Google button starts here -->
-    <a href="{% provider_login_url 'google' %}" class="btn btn-secondary">
-      <i class="fa fa-google fa-fw"></i>
-      <span>Login with Google</span>
-    </a>
-    <!-- Google button ends here -->
-  {% endif %}
-</div>
-
-{% endblock content %}
-
-<!--Sources:
-https://github.com/mdrhmn/dj-social-auth/blob/master/main/templates/main.html
-https://testdriven.io/blog/django-social-auth/#github-provider -->
+<div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card p-5">
+          <div class="text-center">
+            <h2>GeoGuess App</h2>
+            
+            {% if user.is_authenticated %}
+            <img class="user-icon"
+                 src="{{ user.socialaccount_set.all.0.get_avatar_url }}"
+                 alt="User Image" />
+            <h4>Welcome, {{ user.socialaccount_set.all.0.extra_data.name }}</h4>
+            <p class="text-muted">Role: {% if user.is_superuser %}Admin User{% else %}Normal User{% endif %}</p>
+            <p class="text-muted">Email: {{ user.email }}</p>
+            <a href="{% url 'account_logout' %}" class="btn btn-danger mt-3">
+              Logout
+            </a>
+            {% else %}
+            <!-- Google button starts here -->
+            <a href="{% provider_login_url 'google' %}" class="btn btn-secondary mt-3">
+              <i class="fa fa-google fa-fw"></i> Login with Google
+            </a>
+            <!-- Google button ends here -->
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endblock content %}
