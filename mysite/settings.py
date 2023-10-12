@@ -11,12 +11,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-import dj_database_url
+import dj_database_url, secrets, os
 
-import secrets
-import os
-
-import geoGuess.models
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -36,8 +33,10 @@ SECRET_KEY = os.environ.get(
 IS_HEROKU_APP = "DYNO" in os.environ and not "CI" in os.environ
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# Don't need to load environment if on heroku environment
 if not IS_HEROKU_APP:
     DEBUG = True
+    load_dotenv()
 
 if IS_HEROKU_APP:
     ALLOWED_HOSTS = ['*']
