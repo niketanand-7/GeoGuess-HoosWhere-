@@ -12,8 +12,8 @@ def index(request):
 
 
 
-def map_view(request):
+def maps_view(request):
     context = {
-        'maps_api_key': os.environ.get('MAPS_API_KEY')
+        'maps_api_key': os.environ.get('GOOGLE_MAPS_API_KEY')
     }
     return render(request, 'maps.html', context)
