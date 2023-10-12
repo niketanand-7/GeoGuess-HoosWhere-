@@ -27,6 +27,8 @@
     </style>
 </head>
 <body>
+    {% if user.is_authenticated %}
     <div id="map"></div>
+    {% endif %}
 </body>
 </html>
