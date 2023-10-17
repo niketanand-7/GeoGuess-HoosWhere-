@@ -1,34 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maps View</title>
-    <script src="https://maps.googleapis.com/maps/api/js?key={{ maps_api_key }}&callback=initMap" async defer></script>
+<!--
+ @license
+ Copyright 2019 Google LLC. All Rights Reserved.
+ SPDX-License-Identifier: Apache-2.0
+-->
+<html>
+  <head>
+    <title>Maps</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <script>
-        function initMap() {
-            var center = {lat: -34.397, lng: 150.644};  // Change these coordinates as needed
-            var map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 8,
-                center: center
-            });
-            var marker = new google.maps.Marker({
-                position: center,
-                map: map
-            });
-        }
+      /**
+       * @license
+       * Copyright 2019 Google LLC. All Rights Reserved.
+       * SPDX-License-Identifier: Apache-2.0
+       */
+      function initialize() {
+        const fenway = { lat: 42.345573, lng: -71.098326 };
+        const map = new google.maps.Map(document.getElementById("map"), {
+          center: fenway,
+          zoom: 14,
+        });
+        const panorama = new google.maps.StreetViewPanorama(
+          document.getElementById("pano"),
+          {
+            position: fenway,
+            pov: {
+              heading: 34,
+              pitch: 10,
+            },
+          }
+        );
+
+        map.setStreetView(panorama);
+      }
+
+      window.initialize = initialize;
     </script>
-    <style>
-        #map {
-            height: 400px;
-            width: 100%;
-        }
+      <style>
+      /* Custom styles for the base */
+      body {
+        background-color: #f4f4f8; /* light grayish background */
+      }
     </style>
-</head>
-<body>
-    {% if user.is_authenticated %}
+    <style>
+      /**
+       * @license
+       * Copyright 2019 Google LLC. All Rights Reserved.
+       * SPDX-License-Identifier: Apache-2.0
+       */
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      #map,
+      #pano {
+        float: left;
+        height: 50%;
+        width: 25%;
+      }
+    </style>
+  </head>
+  <body>
+  {% if user.is_authenticated %}
     <div id="map"></div>
-    {% endif %}
-</body>
+    <div id="pano"></div>
+  {% endif %}
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key={{ maps_api_key }}&callback=initialize&v=weekly"
+      defer
+    ></script>
+  </body>
 </html>
