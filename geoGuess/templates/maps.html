@@ -22,6 +22,8 @@
        * Copyright 2019 Google LLC. All Rights Reserved.
        * SPDX-License-Identifier: Apache-2.0
        */
+      var guess_coordinates = [38.029305, -78.476677]
+      var answer_coordinates = [38.029305,-78.476677]
       function initialize() {
         const defaultLocation = { lat: 38.029305, lng: -78.476677 }; //can change location
         const map = new google.maps.Map(document.getElementById("map"), {
@@ -47,18 +49,25 @@
         );
 
         map.addListener("click", (e) => {
-           placeMarkerAndPanTo(e.latLng, map, marker, panorama);
+           placeMarkerAndPanTo(e.latLng, map, marker);
         });
       }
       window.initialize = initialize;
-      function placeMarkerAndPanTo(latLng, map, marker, panorama) {
+      function placeMarkerAndPanTo(latLng, map, marker) {
         marker.setPosition(latLng);
         map.panTo(latLng);
+        guess_coordinates[0] = latLng.lat();
+        guess_coordinates[1] = latLng.lng();
       }
 
-      function makeAGuess(latLng, map){
+      function makeAGuess(){
+        var guess = new google.maps.LatLng(guess_coordinates[0],guess_coordinates[1]);
+        var answer = new google.maps.LatLng(answer_coordinates[0],answer_coordinates[1]);
+        var distance = google.maps.geometry.spherical.computeDistanceBetween(guess, answer);
+        document.getElementById("distance").innerHTML = "Your guess was " + (distance/1000.0).toFixed(2)+ " kilometers away from the correct spot!";
         //check distance, scoring
       }
+
     </script>
     <style>
       /* Custom styles for the base */
@@ -67,11 +76,6 @@
       }
     </style>
     <style>
-      /**
-       * @license
-       * Copyright 2019 Google LLC. All Rights Reserved.
-       * SPDX-License-Identifier: Apache-2.0
-       */
       html,
       body {
         height: 100%;
@@ -79,11 +83,41 @@
         padding: 0;
       }
 
-      #map,
       #pano {
         margin: 10px;
         padding-top: 10px;
         float: left;
+        align-content: center;
+        height: 65%;
+        width: 45%;
+      }
+
+      #guessMap {
+        position: relative;
+        margin-top: 10px;
+        height: 100vh;
+      }
+
+      #guessButton {
+        position: absolute;
+        top: 50vh;
+        right: 37vh;
+        width: auto;
+        height: auto;
+        display: flex;
+        height: 5%;
+        margin-top: 10px;
+      }
+
+      #distance {
+        max-width: 40vh;
+        width: auto;
+        height: auto;
+      }
+      #map {
+        margin: 10px;
+        height: auto;
+        padding-top: 10px;
         align-content: center;
         height: 50%;
         width: 35%;
@@ -133,9 +167,14 @@
     {% block content %} {% endblock content %}
     </body>
     <div class="text-center" id="pano"></div>
-    <div class="text-center" id="map"></div>
-    <button class="text-center" onclick="makeAGuess()">Make a Guess</button>
+    <div class="container" id="guessMap">
+      <div class="text-center" id="map"></div>
+      <button id="guessButton" class="text-center item" onclick="makeAGuess()">Make a Guess</button>
+      <label id="distance" class="item">Your guess was: </label>
+    </div>
   {% endif %}
+  <!--{% load static %}
+  <script src="{% static 'geoGuess.js' %}" type="text/javascript"></script> having trouble with javascript static-->
     <script
       src="https://maps.googleapis.com/maps/api/js?key={{ maps_api_key }}&callback=initialize&v=weekly"
       defer
