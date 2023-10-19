@@ -15,6 +15,9 @@
       integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
       crossorigin="anonymous"
     ></script>
+    <!--{% load static %}
+    <script src="{% static 'geoGuess.js' %}"></script> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <script>
       /**
@@ -34,7 +37,6 @@
         const marker = new google.maps.Marker({
           position: defaultLocation,
           map,
-          title: "Click to zoom",
         });
 
         const panorama = new google.maps.StreetViewPanorama(
@@ -68,6 +70,10 @@
         //check distance, scoring
       }
 
+      function getRandomNumber(from, to, fixed) {
+        return (Math.random() * (to -from) + from).toFixed(fixed) * 1;
+      }
+
     </script>
     <style>
       /* Custom styles for the base */
@@ -96,23 +102,27 @@
         position: relative;
         margin-top: 10px;
         height: 100vh;
+        max-width: 100%;
       }
 
       #guessButton {
         position: absolute;
-        top: 50vh;
-        right: 37vh;
-        width: auto;
-        height: auto;
-        display: flex;
-        height: 5%;
+        max-width: 100%;
+        display: inline-flex;
         margin-top: 10px;
       }
 
+      #guessButton::before,
+      #guessButton::after {
+        content: '';
+        display: inline-block;
+        width: 2em;
+        float: right;
+      }
+
       #distance {
-        max-width: 40vh;
-        width: auto;
-        height: auto;
+        max-width: 45em;
+        margin-top: 45px;
       }
       #map {
         margin: 10px;
@@ -155,7 +165,7 @@
               <a class="nav-link" href="{% url 'challenge' %}">Map</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Create</a>
+              <a class="nav-link" href="{% url 'choice' %}">Create</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">Leaderboards</a>
