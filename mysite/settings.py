@@ -153,8 +153,11 @@ except ImportError:
     
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-STATIC_ROOT = BASE_DIR / "staticfiles"
-STATIC_URL = "static/"
+#STATICFILES_DIRS = (
+#    os.path.join(BASE_DIR, 'geoGuess/static'),
+#)
+STATIC_ROOT = os.path.join(BASE_DIR, 'geoGuess/static')
+STATIC_URL = "/static/"
 
 STORAGES = {
     # Enable WhiteNoise's GZip and Brotli compression of static assets:

@@ -11,6 +11,6 @@ urlpatterns = [
     #path('', TemplateView.as_view(template_name="index.html")),
     path('accounts/', include('allauth.urls')),
     path('logout', LogoutView.as_view()),
-    path('maps/', views.maps_view, name = "challenge"),
+    path('maps/', views.maps_view, name="challenge"),
     path('choice/', Choice_View.as_view(), name="choice")
 ]
