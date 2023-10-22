@@ -12,7 +12,6 @@ import os
 def index(request):
     return HttpResponse("Hello, you are at the geoguessing homepage.")
 
-@login_required
 class Home(generic.TemplateView):
     template_name = "home.html"
 
