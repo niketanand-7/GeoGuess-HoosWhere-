@@ -38,3 +38,4 @@ def maps_view(request):
         'maps_api_key': os.environ.get('GOOGLE_MAPS_API_KEY')
     }
     return render(request, 'maps.html', context)
+
