@@ -74,16 +74,37 @@ class ChoiceViewTest(TestCase):
         response = self.client.get(self.choice_url)
         self.assertEqual(response.status_code, 200)
 
-# class AdminAuthTest(TestCase):
-#     def setUp(self):
-#         self.admin_user = User.objects.create_user(
-#             username='admin_test',
-#             password='password123',
-#             is_staff=True,  # Grant staff privileges
-#             is_superuser=True  # Grant superuser privileges
-#         )
-#         # Log in the admin user
-#         self.client.login(username='admin_test', password='password123')
+class AdminAuthTest(TestCase):
 
-#     def admin_see_users_view():
+    def setUp(self):
+        self.admin_user = User.objects.create_user(
+            username='admin_test',
+            password='password123',
+            is_staff=True,  # Grant staff privileges
+            is_superuser=True  # Grant superuser privileges
+        )
+        # Log in the admin user
+        self.client.login(username='admin_test', password='password123')
+        
+    def test_admin_see_users_view(self):
+        self.choice_url = reverse('admin_users')
+        response = self.client.get(self.choice_url)
+        self.assertContains(response, self.admin_user.username) #checks that the usernames are displayed for admin user with higher auth level
 
+    
+class RegularUserAuthTest(TestCase):
+
+    def setUp(self):
+        self.regular_user = User.objects.create_user(
+            username='regular_user',
+            password='password',
+            is_staff=False, 
+            is_superuser=False 
+        )
+        # Log in the regualar user
+        self.client.login(username='regular_user', password='password')
+        self.choice_url = reverse('admin_users')
+
+    def test_regular_not_see_users_view(self):
+        response = self.client.get(self.choice_url)
+        self.assertNotContains(response, self.regular_user.username) #checks that regular user can NOT see the other users
