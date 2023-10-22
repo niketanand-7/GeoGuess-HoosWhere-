@@ -1,9 +1,16 @@
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
-from django.urls import reverse
-from .forms import LocationForm
+from django.views.generic import TemplateView
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.models import User
 from django.views import generic
+from django.shortcuts import render, redirect
+from .forms import LocationForm
 import os
+
+# Create your views here.
+@login_required
+def index(request):
+    return HttpResponse("Hello, you are at the geoguessing homepage.")
 
 class Home(generic.TemplateView):
     template_name = "home.html"
@@ -39,3 +46,11 @@ def maps_view(request):
     }
     return render(request, 'maps.html', context)
 
+
+class AdminUsersView(generic.ListView):
+    template_name = "admin/users.html"
+    context_object_name = "user_list"
+    
+    #get all google registered users
+    def get_queryset(self):
+        return User.objects.all()
