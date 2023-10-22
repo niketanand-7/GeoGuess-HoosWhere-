@@ -19,6 +19,7 @@
     <title>Document</title>
 </head>
 <body>
+    {% if user.is_superuser %}
     <div class="container">
         <ul>
             {% for user in user_list%}
@@ -28,5 +29,6 @@
             {% endfor %}
         </ul>
     </div>
+    {% endif %}
 </body>
 </html>

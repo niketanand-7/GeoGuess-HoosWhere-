@@ -13,6 +13,5 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('logout', LogoutView.as_view()),
     path('maps/', views.maps_view, name = "challenge"),
-    # path('admin/challenge_edit', name="admin_challenge_edit"),
     path('admin_users/', AdminUsersView.as_view(),name="admin_users"),
 ]
