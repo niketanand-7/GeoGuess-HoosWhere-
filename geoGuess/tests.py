@@ -85,12 +85,13 @@ class AdminAuthTest(TestCase):
         )
         # Log in the admin user
         self.client.login(username='admin_test', password='password123')
-        self.choice_url = reverse('admin_users')
-
+        
     def test_admin_see_users_view(self):
+        self.choice_url = reverse('admin_users')
         response = self.client.get(self.choice_url)
         self.assertContains(response, self.admin_user.username) #checks that the usernames are displayed for admin user with higher auth level
 
+    
 class RegularUserAuthTest(TestCase):
 
     def setUp(self):

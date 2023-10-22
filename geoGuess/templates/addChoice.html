@@ -27,6 +27,7 @@
   </head>
   <body>
     {% block content %} 
+    {% if user.is_authenticated %} {% if not user.is_superuser %}
     <div class="text-center">
   <h3 class="my-3"> Create New Location </h3>
     <h5 class="my-3"> In the space below, add a place at UVA, you would like to be featured in a future challenge :)</h5>
@@ -42,6 +43,7 @@
       </div>
     </div>
 </form>
+{% endif %} {% endif %}
 {% endblock content %}
   </body>
 </html>
