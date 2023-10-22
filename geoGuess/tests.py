@@ -2,6 +2,7 @@ from unittest.mock import patch, Mock
 from allauth.socialaccount.models import SocialApp
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 from django.urls import reverse
 from django.test import TestCase, Client
 
@@ -60,3 +61,27 @@ class MapsViewTest(TestCase):
         response = self.client.get(self.maps_url)
         self.assertEqual(response.status_code, 200)
         self.assertIn('maps_api_key', response.context)
+
+class ChoiceViewTest(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.choice_url = reverse('choice')
+
+    def test_choice_view(self):
+        response = self.client.get(self.choice_url)
+        self.assertEqual(response.status_code, 200)
+
+class AdminAuthTest(TestCase):
+    def setUp(self):
+        self.admin_user = User.objects.create_user(
+            username='admin_test',
+            password='password123',
+            is_staff=True,  # Grant staff privileges
+            is_superuser=True  # Grant superuser privileges
+        )
+        # Log in the admin user
+        self.client.login(username='admin_test', password='password123')
+
+    def admin_see_users_view():
+        
