@@ -1,11 +1,11 @@
-from django.test import TestCase, Client
-from django.urls import reverse
-from django.contrib.auth import get_user_model
+from unittest.mock import patch, Mock
 from allauth.socialaccount.models import SocialApp
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
-from allauth.socialaccount.tests import OAuth2TestsMixin
+from django.contrib.auth import get_user_model
+from django.urls import reverse
+from django.test import TestCase, Client
 
-class HomeViewTest(TestCase, OAuth2TestsMixin):
+class HomeViewTest(TestCase):
 
     def setUp(self):
         self.client = Client()
@@ -16,6 +16,27 @@ class HomeViewTest(TestCase, OAuth2TestsMixin):
         self.init_login_mock(GoogleOAuth2Adapter)  # Mocks Google OAuth for testing
         app = SocialApp.objects.create(provider='google', name='google', client_id='123', secret='dummy')
         app.sites.add(1)  # Assuming you're using the default site (change if necessary)
+
+
+    def init_login_mock(self):
+        """
+        Mock the login process for Google OAuth2Adapter
+        """
+        mocked_login = Mock()
+        mocked_login.access_token = 'mocked_token'
+
+        # Patch the specific methods of GoogleOAuth2Adapter
+        patcher1 = patch.object(GoogleOAuth2Adapter, 'complete_login', return_value=mocked_login)
+        patcher2 = patch.object(GoogleOAuth2Adapter, 'get_provider', return_value='google-oauth2')
+
+        # Cleanup after the test case execution
+        self.addCleanup(patcher1.stop)
+        self.addCleanup(patcher2.stop)
+
+        # Start the mock patches
+        patcher1.start()
+        patcher2.start()
+
 
     def test_home_view_unauthenticated(self):
         response = self.client.get(self.home_url)
