@@ -14,10 +14,12 @@ class HomeViewTest(TestCase):
         
         # Create a test user and associated social account
         self.user = get_user_model().objects.create_user(username='testuser', password='testpassword')
-        self.init_login_mock(GoogleOAuth2Adapter)  # Mocks Google OAuth for testing
+        self.init_login_mock() 
         app = SocialApp.objects.create(provider='google', name='google', client_id='123', secret='dummy')
-        app.sites.add(1)  # Assuming you're using the default site (change if necessary)
-
+       
+        from django.contrib.sites.models import Site
+        site = Site.objects.create(domain='test.com', name='test.com')
+        app.sites.add(site)
 
     def init_login_mock(self):
         """
@@ -46,7 +48,7 @@ class HomeViewTest(TestCase):
 
     def test_home_view_authenticated(self):
         # Simulating login with the mock user
-        self.login(self.user)
+        self.client.login(username='testuser', password='testpassword')
         response = self.client.get(self.home_url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Welcome,')
