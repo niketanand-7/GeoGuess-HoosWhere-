@@ -1,7 +1,6 @@
 from django.http import HttpResponse
 from django.views.generic import TemplateView
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
 from django.views import generic
 from django.shortcuts import render
