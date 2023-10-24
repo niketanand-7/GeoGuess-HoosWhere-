@@ -40,12 +40,14 @@ class HomeViewTest(TestCase):
         patcher1.start()
         patcher2.start()
 
-
-    def test_home_view_unauthenticated(self):
+    # Tests the behavior of the home view for unauthenticated users.
+    # It checks if the response status is 200 (OK) and if the response contains the text 'Login with Google'.
+    def test_home_view_unauthenticated(self): 
         response = self.client.get(self.home_url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Login with Google')
-
+    #Tests the home view behavior for authenticated users. 
+    # It logs in a mock user, checks if the response status is 200, and looks for a welcoming message.
     def test_home_view_authenticated(self):
         # Simulating login with the mock user
         self.client.login(username='testuser', password='testpassword')
@@ -58,7 +60,7 @@ class MapsViewTest(TestCase):
     def setUp(self):
         self.client = Client()
         self.maps_url = reverse('challenge')
-
+#Checks if accessing the maps view returns a status code of 200 and if the response context contains a key for the maps API.
     def test_maps_view(self):
         response = self.client.get(self.maps_url)
         self.assertEqual(response.status_code, 200)
@@ -69,7 +71,7 @@ class ChoiceViewTest(TestCase):
     def setUp(self):
         self.client = Client()
         self.choice_url = reverse('choice')
-
+#Tests if accessing the choice view gives a status code of 200.
     def test_choice_view(self):
         response = self.client.get(self.choice_url)
         self.assertEqual(response.status_code, 200)
