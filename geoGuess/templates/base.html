@@ -25,7 +25,6 @@
     </style>
   </head>
   <body>
-    {% if user.is_authenticated %} 
       {% if user.is_superuser %}
       <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
@@ -108,7 +107,6 @@
         </div>
       </div>
     </nav>
-    {% endif %} 
 
     {% block content %} 
     {% endblock content %}
