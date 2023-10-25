@@ -1,23 +1,21 @@
 from django.http import HttpResponse
 from django.views.generic import TemplateView
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.views import generic
 from django.shortcuts import render, redirect
 from .forms import LocationForm
 import os
 
-# Create your views here.
-@login_required
-def index(request):
-    return HttpResponse("Hello, you are at the geoguessing homepage.")
-
 class Home(generic.TemplateView):
     template_name = "home.html"
 
 # Create your views here.
-class Choice_View(generic.CreateView):
+class Choice_View(LoginRequiredMixin, generic.CreateView):
     template_name = 'addChoice.html'
+    login_url='/'
+
     form_class = LocationForm
 
     def post(self, request, *args, **kwargs):
@@ -39,7 +37,7 @@ class Choice_View(generic.CreateView):
             self.get_context_data()
         )
 
-
+@login_required(login_url='/')
 def maps_view(request):
     context = {
         'maps_api_key': os.environ.get('GOOGLE_MAPS_API_KEY')
@@ -47,8 +45,9 @@ def maps_view(request):
     return render(request, 'maps.html', context)
 
 
-class AdminUsersView(generic.ListView):
+class AdminUsersView(LoginRequiredMixin, generic.ListView):
     template_name = "admin/users.html"
+    login_url='/'
     context_object_name = "user_list"
     
     #get all google registered users
