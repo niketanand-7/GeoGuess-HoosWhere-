@@ -13,7 +13,7 @@ class Challenge(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # Link to the user who created the challenge
     image = models.ImageField(upload_to='challenges/')        # Store the uploaded image
     longitude = models.FloatField()
-    latitutde = models.FloatField()               # Store the answer coordinates
+    latitude = models.FloatField()               # Store the answer coordinates
     timestamp = models.DateTimeField(auto_now_add=True)        # Automatically set when the challenge is created
 
     def __str__(self):

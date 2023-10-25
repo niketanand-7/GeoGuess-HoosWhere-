@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Challenge</title>
+
+    <!-- Google Maps CSS -->
+    <link rel="stylesheet" href="path_to_your_static_folder/geoGuess.css" type="text/css" />
+
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ maps_api_key }}&callback=initialize&v=weekly" defer></script>
+</head>
+<body>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- Image Upload Field -->
+    <label for="id_image">Image:</label>
+    <input type="file" name="image" id="id_image" required>
+    <br>
+
+    <!-- Hidden Longitude and Latitude Fields (filled by the map click) -->
+    <input type="hidden" name="longitude" id="id_longitude">
+    <input type="hidden" name="latitude" id="id_latitude">
+
+    <!-- Map Div -->
+    <div id="map" style="height: 400px;"></div>
+    <br>
+
+    <button type="submit">Submit</button>
+</form>
+
+<!-- Google Maps Initialization -->
+<script>
+    var map;
+    var marker;
+
+    function initialize() {
+        var mapOptions = {
+            center: new google.maps.LatLng(0, 0),
+            zoom: 2
+        };
+
+        map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+        google.maps.event.addListener(map, 'click', function(event) {
+            placeMarker(event.latLng);
+        });
+    }
+
+    function placeMarker(location) {
+        if (marker) {  // if marker exists, remove it
+            marker.setMap(null);
+        }
+        marker = new google.maps.Marker({
+            position: location,
+            map: map
+        });
+
+        // Update the hidden form fields with the clicked coordinates
+        document.getElementById('id_longitude').value = location.lng();
+        document.getElementById('id_latitude').value = location.lat();
+    }
+
+    // This function will be called once the Google Maps script is loaded
+    initialize();
+</script>
+
+</body>
+</html>
