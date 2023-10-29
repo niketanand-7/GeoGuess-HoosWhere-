@@ -17,21 +17,22 @@
 
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-
+      {{ form.formset.errors }}
+      {{ form.as_p }}
     <!-- Image Upload Field -->
-    <label for="id_image">Image:</label>
+   <!-- <label for="id_image">Image:</label>
     <input type="file" name="image" id="id_image" required>
     <br>
 
-    <!-- Hidden Longitude and Latitude Fields (filled by the map click) -->
+    Hidden Longitude and Latitude Fields (filled by the map click)
     <input type="hidden" name="longitude" id="id_longitude">
     <input type="hidden" name="latitude" id="id_latitude">
 
-    <!-- Map Div -->
+    Map Div
     <div id="map" style="height: 400px;"></div>
     <br>
-
-    <button type="submit">Submit</button>
+    -->
+    <input type="submit">Submit</input>
 </form>
 
 <!-- Google Maps Initialization -->
