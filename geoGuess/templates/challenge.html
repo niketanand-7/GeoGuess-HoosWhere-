@@ -7,7 +7,8 @@
     <title>Create Challenge</title>
 
     <!-- Google Maps CSS -->
-    <link rel="stylesheet" href="path_to_your_static_folder/geoGuess.css" type="text/css" />
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'geoGuess.css' %}" type="text/css" />
 
     <!-- Google Maps API -->
     <script src="https://maps.googleapis.com/maps/api/js?key={{ maps_api_key }}&callback=initialize&v=weekly" defer></script>

@@ -11,6 +11,7 @@ function initialize() {
 
     const marker = new google.maps.Marker({
         position: defaultLocation,
+        visible: false, //made the marker view be initially false
         map,
     });
 
@@ -34,6 +35,7 @@ function initialize() {
 window.initialize = initialize;
 
 function placeMarkerAndPanTo(latLng, map, marker) {
+    marker.visible = true;
     marker.setPosition(latLng);
     map.panTo(latLng);
     guess_coordinates[0] = latLng.lat();
