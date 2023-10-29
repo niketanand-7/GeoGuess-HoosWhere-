@@ -6,8 +6,8 @@
         <h1 class="text-center">View My Submissions</h1>
         <ul class="list-group mt-4" style="max-width: 600px">
           {% for Challenge in challenges %}
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            {{ Challenge }}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <img src="{{ Challenge.image.url }}" style="margin: 0 auto; height:75%; width: 35%">
             {% if Challenge.approve_status %}
               <a href="" type="button" class="btn btn-success btn-sm"> Approved </a>
             {% else %}
