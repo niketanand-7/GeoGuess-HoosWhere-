@@ -2,6 +2,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
+from .models import Challenge
 from django.views import generic
 from django.shortcuts import render, redirect
 from .forms import LocationForm, ChallengeForm
@@ -53,3 +54,12 @@ class AdminUsersView(generic.ListView):
     #get all google registered users
     def get_queryset(self):
         return User.objects.all()
+
+class ViewSubmissions(generic.ListView):
+    template_name = "viewSubmissions.html"
+    context_object_name = "challenges"
+
+    # get all google registered users
+    def get_queryset(self):
+        return Challenge.objects.filter(user=self.request.user)
+

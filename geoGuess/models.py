@@ -15,6 +15,7 @@ class Challenge(models.Model):
     longitude = models.FloatField()
     latitude = models.FloatField()               # Store the answer coordinates
     timestamp = models.DateTimeField(auto_now_add=True)        # Automatically set when the challenge is created
+    approve_status = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Challenge {self.pk} by {self.user.username}"

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<title>View Submissions</title>
+<div class="container p-5 d-flex align-items-center justify-content-center">
+      <div style="width: 500px">
+        <h1 class="text-center">View My Submissions</h1>
+        <ul class="list-group mt-4" style="max-width: 600px">
+          {% for Challenge in challenges %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            {{ Challenge }}
+            {% if Challenge.approve_status %}
+              <a href="" type="button" class="btn btn-success btn-sm"> Approved </a>
+            {% else %}
+              <a href="" type="button" class="btn btn-danger btn-sm"> Waiting for Approval</a>
+            {% endif %}
+            <!-- TODO: make this button link to django admin or other means of editing users -->
+          </li>
+          {% empty %}
+          <li class="list-group-item d-flex justify-content-between align-items-center"> You have no submissions </li>
+          {% endfor %}
+        </ul>
+      </div>
+</div>
+{% endblock content %}
