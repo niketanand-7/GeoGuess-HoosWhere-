@@ -1,12 +1,13 @@
 from django import forms
-from .models import Location, Challenge
-
-class LocationForm(forms.ModelForm):
-    class Meta:
-        model = Location
-        fields = ['place']
+from .models import Guess, Challenge
 
 class ChallengeForm(forms.ModelForm):
     class Meta:
         model = Challenge
         fields = ['image', 'longitude', 'latitude']
+        
+class GuessForm(forms.ModelForm):
+    class Meta:
+        model = Guess
+        fields = ['score']
+    
