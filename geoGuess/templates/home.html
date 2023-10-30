@@ -32,21 +32,21 @@
             <h2>HoosWhere? App</h2>
             
             {% if user.is_authenticated %}
-            <img class="user-icon"
-                 src="{{ user.socialaccount_set.all.0.get_avatar_url }}"
-                 alt="User Image" />
-            <h4>Welcome, {{ user.socialaccount_set.all.0.extra_data.name }}</h4>
-            <p class="text-muted">Role: {% if user.is_superuser %}Admin User{% else %}Normal User{% endif %}</p>
-            <p class="text-muted">Email: {{ user.email }}</p>
-            <a href="{% url 'account_logout' %}" class="btn btn-danger mt-3">
-              Logout
-            </a>
+              <img class="user-icon"
+                  src="{{ user.socialaccount_set.all.0.get_avatar_url }}"
+                  alt="User Image" />
+              <h4>Welcome, {{ user.socialaccount_set.all.0.extra_data.name }}</h4>
+              <p class="text-muted">Role: {% if user.is_superuser %}Admin User{% else %}Normal User{% endif %}</p>
+              <p class="text-muted">Email: {{ user.email }}</p>
+              <a href="{% url 'account_logout' %}" class="btn btn-danger mt-3">
+                Logout
+              </a>
             {% else %}
-            <!-- Google button starts here -->
-            <a href="{% provider_login_url 'google' %}" class="btn btn-secondary mt-3">
-              <i class="fa fa-google fa-fw"></i> Login with Google
-            </a>
-            <!-- Google button ends here -->
+              <!-- Google button starts here -->
+              <a href="{% provider_login_url 'google' %}" class="btn btn-secondary mt-3">
+                <i class="fa fa-google fa-fw"></i> Login with Google
+              </a>
+              <!-- Google button ends here -->
             {% endif %}
           </div>
         </div>

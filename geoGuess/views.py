@@ -14,8 +14,10 @@ class Home(generic.TemplateView):
     template_name = "home.html"
 
 
-class AddChallengeView(generic.CreateView):
+class AddChallengeView(LoginRequiredMixin, generic.CreateView):
     template_name = 'challenge.html'
+    login_url = '/'
+
     form_class = ChallengeForm
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -42,8 +44,10 @@ class AddChallengeView(generic.CreateView):
             self.get_context_data()
         )
     
-class MapsView(TemplateView):
+class MapsView(LoginRequiredMixin, TemplateView):
     template_name = 'maps.html'
+    login_url = '/'
+
     form_class = GuessForm
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -71,8 +75,10 @@ class MapsView(TemplateView):
             self.get_context_data()
         )
 
-class ViewSubmissions(generic.ListView):
+class ViewSubmissions(LoginRequiredMixin, generic.ListView):
     template_name = "viewSubmissions.html"
+    login_url = '/'
+
     context_object_name = "challenges"
 
     # get all google registered users
@@ -81,7 +87,7 @@ class ViewSubmissions(generic.ListView):
     
 ##########################################################################3
 #Admin Views
-class AdminUsersView(generic.ListView):
+class AdminUsersView(LoginRequiredMixin, generic.ListView):
     template_name = "admin/users.html"
     login_url='/'
     context_object_name = "user_list"
@@ -90,8 +96,9 @@ class AdminUsersView(generic.ListView):
     def get_queryset(self):
         return User.objects.all()
 
-class ApproveSubmissionsView(generic.ListView):
+class ApproveSubmissionsView(LoginRequiredMixin, generic.ListView):
     template_name = "admin/approveSubmissions.html"
+    login_url='/'
     form_name = ApproveChallengeForm
     context_object_name = "challenge_list"
 
