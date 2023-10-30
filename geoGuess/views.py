@@ -70,6 +70,16 @@ class MapsView(TemplateView):
             self.get_context_data()
         )
 
+class ViewSubmissions(generic.ListView):
+    template_name = "viewSubmissions.html"
+    context_object_name = "challenges"
+
+    # get all google registered users
+    def get_queryset(self):
+        return Challenge.objects.filter(user=self.request.user)
+    
+##########################################################################3
+#Admin Views
 class AdminUsersView(generic.ListView):
     template_name = "admin/users.html"
     context_object_name = "user_list"
@@ -78,11 +88,13 @@ class AdminUsersView(generic.ListView):
     def get_queryset(self):
         return User.objects.all()
 
-class ViewSubmissions(generic.ListView):
-    template_name = "viewSubmissions.html"
-    context_object_name = "challenges"
+class ApproveSubmissionsView(generic.ListView):
+    template_name = "admin/approveSubmissions.html"
+    context_object_name = "challenge_list"
 
-    # get all google registered users
     def get_queryset(self):
-        return Challenge.objects.filter(user=self.request.user)
+        return Challenge.objects.all()
+
+
+
 
