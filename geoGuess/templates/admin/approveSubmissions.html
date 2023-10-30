@@ -4,15 +4,16 @@
 <div class="container p-5 d-flex align-items-center justify-content-center">
     <div style="width: 500px">
         <h1 class="text-center">Approve Submissions</h1>
-        <form>
+        <form id="form" method="post">
+            {% csrf_token %}
             <ul class="list-group mt-4" style="max-width: 600px">
                 {% for Challenge in challenge_list %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
                     {% if not Challenge.approve_status %}
+                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     <img src="{{ Challenge.image.url }}" style="margin: 0 auto; height:75%; width: 35%">
                     Latitude: {{ Challenge.latitude|floatformat:5 }}
                     Longitude: {{ Challenge.longitude|floatformat:5 }}
-                    <input type="checkbox" name="approved_challenges" value="{{ challenge.id }}">
+                    <input type="checkbox" name="approved_challenges" value="{{ Challenge.id }}">
                     <!-- prob need to make a form -->
                     {% endif %}
                 </li>

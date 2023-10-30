@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'geoGuess',
+    'django_crontab',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',

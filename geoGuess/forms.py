@@ -10,4 +10,12 @@ class GuessForm(forms.ModelForm):
     class Meta:
         model = Guess
         fields = ['score']
+        
+class ApproveChallengeForm(forms.ModelForm):
+    class Meta:
+        model = Challenge
+        fields = ['approve_status']
+        widgets = {
+            'approve_status': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
     
