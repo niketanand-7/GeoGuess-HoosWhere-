@@ -54,6 +54,9 @@
                 <a class="nav-link" href="{% url 'admin_users' %}">See Users</a>
               </li>
               <li class="nav-item">
+                <a class="nav-link" href="{% url 'approve_submissions' %}">Approve Submissions</a>
+              </li>
+              <li class="nav-item">
                 <a class="nav-link" href="#">See Reports</a>
               </li>
       {% else %}
@@ -82,10 +85,13 @@
                 >
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'challenge' %}">Map</a>
+                <a class="nav-link" href="{% url 'maps' %}">Map</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'choice' %}">Create</a>
+                <a class="nav-link" href="{% url 'challenge' %}">Create</a>
+              </li>
+               <li class="nav-item">
+                <a class="nav-link" href="{% url 'submissions' %}">View Submissions</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">Leaderboards</a>

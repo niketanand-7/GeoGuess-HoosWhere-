@@ -1,8 +1,21 @@
 from django import forms
-from .models import Location
+from .models import Guess, Challenge
 
-class LocationForm(forms.ModelForm):
+class ChallengeForm(forms.ModelForm):
     class Meta:
-        model = Location
-        fields = ['place']
+        model = Challenge
+        fields = ['image', 'longitude', 'latitude']
+        
+class GuessForm(forms.ModelForm):
+    class Meta:
+        model = Guess
+        fields = ['score']
+        
+class ApproveChallengeForm(forms.ModelForm):
+    class Meta:
+        model = Challenge
+        fields = ['approve_status']
+        widgets = {
+            'approve_status': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
     

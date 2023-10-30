@@ -3,3 +3,5 @@ gunicorn
 django-heroku
 django-allauth
 python-dotenv
+Pillow
+django-crontab
