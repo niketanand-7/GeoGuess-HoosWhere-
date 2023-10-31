@@ -9,7 +9,7 @@
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   }
 
-  .user-icon {
+  .user-icon-home {
     border-radius: 50%;
     border: 3px solid white;
     width: 80px;
@@ -32,7 +32,7 @@
             <h2>HoosWhere? App</h2>
             
             {% if user.is_authenticated %}
-              <img class="user-icon"
+              <img class="user-icon user-icon-home"
                   src="{{ user.socialaccount_set.all.0.get_avatar_url }}"
                   alt="User Image" />
               <h4>Welcome, {{ user.socialaccount_set.all.0.extra_data.name }}</h4>

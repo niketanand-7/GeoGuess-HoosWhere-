@@ -25,8 +25,9 @@
     </style>
   </head>
   <body>
+    {% if user.is_authenticated %}
       {% if user.is_superuser %}
-      <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <nav class="navbar navbar-expand-lg bg-body-tertiary" >
         <div class="container-fluid">
           <a class="navbar-brand" href="#">HoosWhere?</a>
           <button
@@ -56,9 +57,6 @@
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'approve_submissions' %}">Approve Submissions</a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">See Reports</a>
-              </li>
       {% else %}
       <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
@@ -77,18 +75,10 @@
           <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                <a
-                  class="nav-link active"
-                  aria-current="page"
-                  href="{% url 'home' %}"
-                  >Home</a
-                >
+                <a class="nav-link active" aria-current="page" href="{% url 'maps' %}">Challenge Home</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'maps' %}">Map</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'challenge' %}">Create</a>
+                <a class="nav-link" href="{% url 'challenge' %}">Create Challenge</a>
               </li>
                <li class="nav-item">
                 <a class="nav-link" href="{% url 'submissions' %}">View Submissions</a>
@@ -102,18 +92,20 @@
             class="navbar-text d-flex align-items-center"
             style="height: 30px"
           >
-            Hello, {{ user.socialaccount_set.all.0.extra_data.name }}!
+            <a href="{% url 'home' %}" style="text-decoration: none">
+              Hello, {{ user.socialaccount_set.all.0.extra_data.name }}!
             <img
               class="user-icon mx-2"
               src="{{ user.socialaccount_set.all.0.get_avatar_url }}"
               alt="User Image"
-              style="height: 30px; width: 30px"
+              style="height: 30px; width: 30px; border-radius: 50%;"
             />
+            </a>
           </span>
         </div>
       </div>
     </nav>
-
+    {% endif %}
     {% block content %} 
     {% endblock content %}
   </body>

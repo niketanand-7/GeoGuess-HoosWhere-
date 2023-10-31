@@ -15,7 +15,7 @@ class Home(generic.TemplateView):
 
 
 class AddChallengeView(LoginRequiredMixin, generic.CreateView):
-    template_name = 'challenge.html'
+    template_name = 'user/challenge.html'
     login_url = '/'
 
     form_class = ChallengeForm
@@ -45,7 +45,7 @@ class AddChallengeView(LoginRequiredMixin, generic.CreateView):
         )
     
 class MapsView(LoginRequiredMixin, TemplateView):
-    template_name = 'maps.html'
+    template_name = 'user/maps.html'
     login_url = '/'
 
     form_class = GuessForm
@@ -76,7 +76,7 @@ class MapsView(LoginRequiredMixin, TemplateView):
         )
 
 class ViewSubmissions(LoginRequiredMixin, generic.ListView):
-    template_name = "viewSubmissions.html"
+    template_name = "user/viewSubmissions.html"
     login_url = '/'
 
     context_object_name = "challenges"
@@ -95,6 +95,11 @@ class AdminUsersView(LoginRequiredMixin, generic.ListView):
     #get all google registered users
     def get_queryset(self):
         return User.objects.all()
+    
+    # def post(self, request, *args, **kwargs):
+    #     if 'deleteUser' in request.POST:
+
+        
 
 class ApproveSubmissionsView(LoginRequiredMixin, generic.ListView):
     template_name = "admin/approveSubmissions.html"
@@ -110,7 +115,3 @@ class ApproveSubmissionsView(LoginRequiredMixin, generic.ListView):
 
     def get_queryset(self):
         return Challenge.objects.all()
-
-
-
-
