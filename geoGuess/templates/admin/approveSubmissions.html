@@ -14,7 +14,6 @@
                     Latitude: {{ Challenge.latitude|floatformat:5 }}
                     Longitude: {{ Challenge.longitude|floatformat:5 }}
                     <input type="checkbox" name="approved_challenges" value="{{ Challenge.id }}">
-                    <!-- prob need to make a form -->
                     {% endif %}
                 </li>
                 {% empty %}

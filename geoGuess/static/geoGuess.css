@@ -48,6 +48,17 @@ body {
     margin-left: 20px;
 }
 
+#image {
+    margin: 0 auto;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    height: 55vh;
+    width: 85%;
+    background-color: #ffffff;
+    margin-right: 30px;
+}
+
 #distance {
     font-size: 1.2em;
     color: #333;
