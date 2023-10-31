@@ -10,7 +10,9 @@
     <script src="{% static 'geoGuess.js' %}" type="text/javascript"></script>
       <div class="container mt-5">
         <div class="d-flex justify-content-between" id="guessMap">
-            <div class="flex-fill mr-2 text-center" id="pano"></div>
+            <div class="flex-fill mr-2 text-center" id="image">  <!-- was id="pano"-->
+                <img src="{{ Challenge.image.url }}" style="margin: 0 auto; height:80%; width: 85%">
+            </div>
             <div class="flex-fill ml-2 text-center" id="map"></div>
         </div>
         <button id="guessButton" class="btn btn-primary mt-3 mx-auto d-block" onclick="makeAGuess()">Make a Guess</button>

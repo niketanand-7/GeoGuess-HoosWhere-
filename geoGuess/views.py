@@ -47,6 +47,7 @@ class MapsView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['maps_api_key'] = os.environ.get('GOOGLE_MAPS_API_KEY')
+        context['Challenge'] = Challenge.objects.first() #sets the information for the challenge being used
         return context
 
     def post(self, request, *args, **kwargs):
@@ -100,7 +101,7 @@ class ApproveSubmissionsView(generic.ListView):
         return render(request, "admin/approveSubmissions.html", {'challenge_list': challenge_list})
 
     def get_queryset(self):
-        return Challenge.objects.all()
+        return Challenge.objects.filter(approve_status=False)
 
 
 
