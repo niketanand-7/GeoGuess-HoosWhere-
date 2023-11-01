@@ -5,3 +5,5 @@ django-allauth
 python-dotenv
 Pillow
 django-crontab
+boto3
+django-storages
