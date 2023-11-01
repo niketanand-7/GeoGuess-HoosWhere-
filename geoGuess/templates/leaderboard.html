@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+<title>Leaderboard</title>
+<div class="container p-5 d-flex align-items-center justify-content-center">
+    <div style="width: 500px">
+        <h1 class="text-center">Leaderboard</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Avg Score</th>
+                    <th scope="col">Games Played</th>
+                    <th score="col">Rating</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for player in leaderboard %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ player.name }}</td>
+                    <td>{{player.average_score}}</td>
+                    <td>{{player.games_played}}</td>
+                    <td>{{player.rating}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}
