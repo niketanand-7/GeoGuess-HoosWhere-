@@ -1,6 +1,5 @@
 var guess_coordinates = [38.029305, -78.476677]
-var answer_coordinates = [38.029305, -78.476677]
-
+var answer_coordinates = [challenge_latitude, challenge_longitude]
 
 function initialize() {
     const defaultLocation = {lat: 38.029305, lng: -78.476677}; //can change location

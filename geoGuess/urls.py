@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 from django.contrib.auth.views import LogoutView
 
 from .import views
-from .views import Home, AdminUsersView, AddChallengeView, MapsView, ViewSubmissions, ApproveSubmissionsView
+from .views import Home, AdminUsersView, AddChallengeView, MapsView, ViewSubmissions, ApproveSubmissionsView, LeaderboardView
 
 
 urlpatterns = [
@@ -17,5 +17,6 @@ urlpatterns = [
     path('submissions/', ViewSubmissions.as_view(), name="submissions"),
     path('admin_users/', AdminUsersView.as_view(), name="admin_users"),
     path('approve_submissions/', ApproveSubmissionsView.as_view(), name="approve_submissions"),
-    path('challenge_form/', AddChallengeView.as_view(), name="challenge")
+    path('challenge_form/', AddChallengeView.as_view(), name="challenge"),
+    path('leaderboard/', LeaderboardView.as_view(), name="leaderboard")
 ]

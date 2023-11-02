@@ -38,7 +38,7 @@ class AddChallengeView(LoginRequiredMixin, generic.CreateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
         form.save(commit=True)
-        return redirect("home")   # Redirect to homepage or any other page after saving
+        return redirect("submissions")   # Redirect to homepage or any other page after saving
     def form_invalid(self, form):
         return self.render_to_response(
             self.get_context_data()
@@ -52,6 +52,7 @@ class MapsView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['maps_api_key'] = os.environ.get('GOOGLE_MAPS_API_KEY')
+        context['Challenge'] = Challenge.objects.filter(approve_status=True).first() #sets the information for the challenge being used
         return context
 
     def post(self, request, *args, **kwargs):
@@ -84,7 +85,39 @@ class ViewSubmissions(LoginRequiredMixin, generic.ListView):
     # get all google registered users
     def get_queryset(self):
         return Challenge.objects.filter(user=self.request.user)
-    
+
+class LeaderboardView(generic.ListView):
+    template_name = "leaderboard.html"
+    context_object_name = "leaderboard"
+    # Determines how much weight to give to average score vs max score for leaderboard
+    weight = 0.8
+    def get_queryset(self):
+        user_list = User.objects.all()
+        guess_list = Guess.objects.all()
+        user_stats = {}
+        for guess in guess_list:
+            username = guess.user.username
+            if username not in user_stats:
+                user_stats[username] = {"score": 0, "games_played": 0}
+
+            user_stats[username]["games_played"] += 1
+            user_stats[username]["score"] += guess.score
+
+        leaderboard = []
+        for user in user_list:
+            if(user.username in user_stats):
+                games_played = user_stats[user.username]["games_played"]
+                average_score = 0
+                if(games_played != 0):
+                    average_score = user_stats[user.username]["score"] / games_played
+
+                # Calculate rating based on average score and games played (Can be changed in the future)
+                rating = (self.weight * average_score) + ((1 - self.weight) * games_played) * 1000
+
+                leaderboard.append({"name": user.first_name, "average_score": int(average_score), 
+                                    "games_played": int(games_played), "rating": int(rating)})
+        return sorted(leaderboard, key=lambda x: x['rating'], reverse=True)
+
 ##########################################################################3
 #Admin Views
 class AdminUsersView(LoginRequiredMixin, generic.ListView):
@@ -114,4 +147,4 @@ class ApproveSubmissionsView(LoginRequiredMixin, generic.ListView):
         return render(request, "admin/approveSubmissions.html", {'challenge_list': challenge_list})
 
     def get_queryset(self):
-        return Challenge.objects.all()
+        return Challenge.objects.filter(approve_status=False)
