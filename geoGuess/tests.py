@@ -7,6 +7,8 @@ from django.urls import reverse
 from django.test import TestCase, Client, LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from .models import Challenge, Guess
+from .forms import ChallengeForm, ApproveChallengeForm
 import os
 class HomeViewTest(TestCase):
     def setUp(self):
@@ -127,3 +129,23 @@ class RegularUserAuthTest(TestCase):
         response = self.client.get(self.choice_url)
         self.assertEqual(response.status_code, 403) #checks that regular user access this admin exclusive page
         #should not have permission to access page
+
+class ChallengeModelTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', password='test')
+        self.challenge = Challenge.objects.create(user=self.user,latitude=38,longitude=-78.3)
+    def test_add_challenge_view(self):
+        response = self.client.post(reverse('challenge'), data =
+        {
+            "image": "/media/testImages/chemistryBuilding_image.jpg",
+            "longitude": -78.32,
+            "latitude": 32.133
+        })
+        self.assertEqual(response.status_code, 302) #redirecting page
+        self.assertEqual(Challenge.objects.count(), 1) #checking if Challenge can be added
+    #tests adding challenge with no marker    
+    def test_add_challenge_view_no_marker(self):
+        self.client.login(username='testuser',password='test')
+        response = self.client.post(reverse('challenge')) #no data
+        Challenge.objects.all().delete() #deleting object from previous test
+        self.assertEqual(Challenge.objects.count(), 0) #checking if Challenge is be added w/ no data

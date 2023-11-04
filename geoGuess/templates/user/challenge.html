@@ -11,6 +11,7 @@
         defer></script>
 <body>
 <div class="text-center">
+    <div id="error-message" class="error-message" style="display: none;"></div>
     <h2 class="my-3"> Add a New Location to Be Featured in a Future Challenge</h2>
     <h4 class="my-3"> In the space below, upload an image at UVA, you would like to be featured in a future challenge
         :)</h4>
@@ -22,6 +23,7 @@
     <form id="form" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.formset.errors }}
+        {{ form.non_field.errors }}
         <!-- Image Upload Field -->
         <label class="my-3"for="id_image">Image:</label>
         <input type="file" name="image" id="id_image" required>
@@ -69,6 +71,24 @@
         document.getElementById('id_longitude').value = location.lng();
         document.getElementById('id_latitude').value = location.lat();
     }
+
+    form.addEventListener("submit", function (event) {
+        // Check if latitude and longitude are empty
+        var latitude = document.getElementById('id_latitude').value;
+        var longitude = document.getElementById('id_longitude').value;
+
+        // Error message element
+        var errorMessage = document.getElementById("error-message");
+
+        if (!latitude || !longitude) {
+            // Display an error message
+            errorMessage.innerText = 'Please place a marker on the map for the corresponding image!';
+            errorMessage.style.display = 'block';
+
+            // Prevent form submission
+            event.preventDefault();
+        }
+    });
 
     // TO-DO: add error check if marker isn't placed
     // This function will be called once the Google Maps script is loaded
