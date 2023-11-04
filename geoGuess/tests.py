@@ -9,7 +9,9 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from .models import Challenge, Guess
 from .forms import ChallengeForm, ApproveChallengeForm
+from django.db import transaction, IntegrityError
 import os
+
 class HomeViewTest(TestCase):
     def setUp(self):
         self.client = Client()
@@ -149,3 +151,49 @@ class ChallengeModelTest(TestCase):
         response = self.client.post(reverse('challenge')) #no data
         Challenge.objects.all().delete() #deleting object from previous test
         self.assertEqual(Challenge.objects.count(), 0) #checking if Challenge is be added w/ no data
+
+    def test_challenge_form_valid(self):
+        form_data = {
+            'longitude': -78.32,
+            'latitude': 32.133,
+            'image': SimpleUploadedFile(name='test_image.jpg', content=open(image_path, 'rb').read(),
+                                        content_type='image/jpeg')
+        }
+        form = ChallengeForm(data=form_data)
+        self.assertTrue(form.is_valid())
+
+    def test_challenge_form_invalid(self):
+        form_data = {
+            'longitude': 'invalid_data',
+            'latitude': 'invalid_data',
+            # Image field is omitted to simulate a missing image upload.
+        }
+        form = ChallengeForm(data=form_data)
+        self.assertFalse(form.is_valid())
+        self.assertIn('longitude', form.errors)
+        self.assertIn('latitude', form.errors)
+        self.assertIn('image', form.errors)
+
+
+class ChallengeEdgeCaseTest(TestCase):
+    def test_challenge_with_extreme_values(self):
+        user = User.objects.create_user(username='testuser', password='test')
+        Challenge.objects.create(user=user, latitude=90, longitude=180)
+        Challenge.objects.create(user=user, latitude=-90, longitude=-180)
+        self.assertEqual(Challenge.objects.count(), 2)
+        # Test that extreme values do not break the application.
+
+
+
+class ChallengeTransactionTest(TestCase):
+    def test_challenge_creation_transaction(self):
+        with transaction.atomic():
+            user = User.objects.create_user(username='testuser', password='test')
+            try:
+                # Intentionally cause an error in the second operation
+                Challenge.objects.create(user=user, latitude=38, longitude=-78.3)
+                Challenge.objects.create(user=user, latitude=None, longitude=None)
+            except IntegrityError:
+                pass
+        # The first Challenge should not be saved due to the atomic block.
+        self.assertEqual(Challenge.objects.count(), 0)
