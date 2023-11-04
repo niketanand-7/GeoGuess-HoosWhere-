@@ -9,8 +9,10 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from .models import Challenge, Guess
 from .forms import ChallengeForm, ApproveChallengeForm
+from .cron import generate_daily_challenge
 from django.db import transaction, IntegrityError
 import os
+
 
 class HomeViewTest(TestCase):
     def setUp(self):
@@ -197,3 +199,91 @@ class ChallengeTransactionTest(TestCase):
                 pass
         # The first Challenge should not be saved due to the atomic block.
         self.assertEqual(Challenge.objects.count(), 0)
+
+class ChallengeGuessIntegrationTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', password='test')
+
+        self.challenge = Challenge.objects.create(
+            user=self.user,
+            image='path/to/image.jpg',
+            longitude=123.45,
+            latitude=67.89,
+            approve_status=True
+        )
+
+    def test_guess_association_with_challenge(self):
+        guess = Guess.objects.create(
+            user=self.user,
+            challenge=self.challenge,
+            numOfAttempts=1,
+            score=100,
+            distanceFromAnswer=0.0
+        )
+
+        self.assertEqual(self.challenge.guess_set.count(), 1)
+        self.assertEqual(self.challenge.guess_set.first(), guess)
+
+        # Test the Guess attributes
+        self.assertEqual(guess.numOfAttempts, 1)
+        self.assertEqual(guess.score, 100)
+        self.assertEqual(guess.distanceFromAnswer, 0.0)
+
+
+class GuessModelTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create(username='testuser', password='testpassword')
+        self.challenge = Challenge.objects.create(
+            user=self.user,
+            image='path/to/image.jpg',
+            longitude=123.45,
+            latitude=67.89,
+            approve_status=True
+        )
+
+    def test_guess_creation(self):
+        guess = Guess.objects.create(
+            user=self.user,
+            challenge=self.challenge,
+            numOfAttempts=1,
+            score=100,
+            distanceFromAnswer=0.0
+        )
+
+        saved_guess = Guess.objects.get(pk=guess.pk)
+
+        # Check that the Guess has been correctly saved and its attributes are correct
+        self.assertEqual(saved_guess.user, self.user)
+        self.assertEqual(saved_guess.challenge, self.challenge)
+        self.assertEqual(saved_guess.numOfAttempts, 1)
+        self.assertEqual(saved_guess.score, 100)
+        self.assertEqual(saved_guess.distanceFromAnswer, 0.0)
+
+    def test_updating_guess_fields(self):
+        guess = Guess.objects.create(
+            user=self.user,
+            challenge=self.challenge
+        )
+
+        guess.numOfAttempts += 1
+        guess.score = 80
+        guess.distanceFromAnswer = 20.0
+        guess.save()
+
+        updated_guess = Guess.objects.get(pk=guess.pk)
+
+        # Check that the fields have been updated correctly
+        self.assertEqual(updated_guess.numOfAttempts, 1)
+        self.assertEqual(updated_guess.score, 80)
+        self.assertEqual(updated_guess.distanceFromAnswer, 20.0)
+
+    def test_string_representation(self):
+        # Create a Guess instance
+        guess = Guess.objects.create(
+            user=self.user,
+            challenge=self.challenge
+        )
+
+        # Check the __str__ representation
+        self.assertEqual(str(guess), f"Guess {guess.pk} by {self.user.username}")
+
