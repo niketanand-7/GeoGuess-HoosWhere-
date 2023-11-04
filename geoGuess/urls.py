@@ -4,7 +4,8 @@ from django.views.generic import TemplateView
 from django.contrib.auth.views import LogoutView
 
 from .import views
-from .views import Home, AdminUsersView, AddChallengeView, MapsView, ViewSubmissions, ApproveSubmissionsView, LeaderboardView
+from .views import Home, AdminUsersView, AddChallengeView 
+from .views import MapsView, ViewSubmissions, ApproveSubmissionsView, LeaderboardView, DailyChallengeView, DailyChallengeListView
 
 
 urlpatterns = [
@@ -14,6 +15,8 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('logout', LogoutView.as_view()),
     path('maps/', MapsView.as_view(), name="maps"),
+    path('daily_challenges', DailyChallengeListView.as_view(), name="daily_challenge_list"),
+    path('daily_challenge/<int:pk>/', DailyChallengeView.as_view(), name="daily_challenge"),
     path('submissions/', ViewSubmissions.as_view(), name="submissions"),
     path('admin_users/', AdminUsersView.as_view(), name="admin_users"),
     path('approve_submissions/', ApproveSubmissionsView.as_view(), name="approve_submissions"),

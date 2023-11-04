@@ -78,13 +78,16 @@
                 <a class="nav-link active" aria-current="page" href="{% url 'maps' %}">Challenge Home</a>
               </li>
               <li class="nav-item">
+                <a class="nav-link active" href="{% url 'daily_challenge_list' %}">Daily Challenges</a>
+              </li>
+              <li class="nav-item">
                 <a class="nav-link" href="{% url 'challenge' %}">Create Challenge</a>
               </li>
                <li class="nav-item">
                 <a class="nav-link" href="{% url 'submissions' %}">View Submissions</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'leaderboard' %}">Leaderboards</a>
+                <a class="nav-link" href="{% url 'leaderboard' %}">Leaderboard</a>
               </li>
         {% endif %}
           </ul>

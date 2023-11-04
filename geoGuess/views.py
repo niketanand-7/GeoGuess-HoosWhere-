@@ -3,7 +3,7 @@ from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from .models import Challenge, Guess
+from .models import Challenge, Guess, DailyChallenge
 from django.views import generic
 from django.shortcuts import render, redirect
 from .forms import ChallengeForm, GuessForm, ApproveChallengeForm
@@ -44,15 +44,29 @@ class AddChallengeView(LoginRequiredMixin, generic.CreateView):
             self.get_context_data()
         )
     
-class MapsView(LoginRequiredMixin, TemplateView):
-    template_name = 'user/maps.html'
+# View to see past challenges and current challenge
+class DailyChallengeListView(LoginRequiredMixin, generic.ListView):
+    template_name = "user/daily_challenge_list.html"
     login_url = '/'
+    context_object_name = "daily_challenge_list"
 
-    form_class = GuessForm
+    def get_queryset(self):
+        print(DailyChallenge.objects.all())
+        print(DailyChallenge.objects.all().count())
+        return DailyChallenge.objects.all()
+
+# View to see a specific daily challenge
+class DailyChallengeView(LoginRequiredMixin, generic.DetailView):
+    template_name = "user/daily_challenge.html"
+    login_url = '/'
+    model = DailyChallenge
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['maps_api_key'] = os.environ.get('GOOGLE_MAPS_API_KEY')
-        context['Challenge'] = Challenge.objects.filter(approve_status=True).first() #sets the information for the challenge being used
+        context['Challenge'] = Challenge.objects.filter(self.get_object().challenge).last() #sets the information for the challenge being used
+        if self.template_name == "user/daily_challenge_seen.html":
+            context['Guess'] = Guess.objects.filter(user=self.request.user, challenge=self.get_object().challenge).first()
         return context
 
     def post(self, request, *args, **kwargs):
@@ -75,6 +89,24 @@ class MapsView(LoginRequiredMixin, TemplateView):
         return self.render_to_response(
             self.get_context_data()
         )
+    def get_template_names(self):
+        daily_challenge = self.get_object()
+        if(daily_challenge.hasBeenGuessed(self.request.user)):
+            return ["user/daily_challenge_guessed.html"]
+        
+        return ["user/daily_challenge.html"]
+
+
+class MapsView(LoginRequiredMixin, TemplateView):
+    template_name = 'user/maps.html'
+    login_url = '/'
+
+    form_class = GuessForm
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['maps_api_key'] = os.environ.get('GOOGLE_MAPS_API_KEY')
+        context['Challenge'] = Challenge.objects.filter(approve_status=True).first() #sets the information for the challenge being used
+        return context    
 
 class ViewSubmissions(LoginRequiredMixin, generic.ListView):
     template_name = "user/viewSubmissions.html"
