@@ -1,7 +1,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from .models import Challenge, Guess
 from django.views import generic
@@ -120,7 +120,7 @@ class LeaderboardView(generic.ListView):
 
 ##########################################################################3
 #Admin Views
-class AdminUsersView(LoginRequiredMixin, generic.ListView):
+class AdminUsersView(LoginRequiredMixin, UserPassesTestMixin, generic.ListView):
     template_name = "admin/users.html"
     login_url='/'
     context_object_name = "user_list"
@@ -128,13 +128,16 @@ class AdminUsersView(LoginRequiredMixin, generic.ListView):
     #get all google registered users
     def get_queryset(self):
         return User.objects.all()
+
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.is_staff
     
     # def post(self, request, *args, **kwargs):
     #     if 'deleteUser' in request.POST:
 
         
 
-class ApproveSubmissionsView(LoginRequiredMixin, generic.ListView):
+class ApproveSubmissionsView(LoginRequiredMixin, UserPassesTestMixin, generic.ListView):
     template_name = "admin/approveSubmissions.html"
     login_url='/'
     form_name = ApproveChallengeForm
@@ -148,3 +151,7 @@ class ApproveSubmissionsView(LoginRequiredMixin, generic.ListView):
 
     def get_queryset(self):
         return Challenge.objects.filter(approve_status=False)
+
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.is_staff
+
