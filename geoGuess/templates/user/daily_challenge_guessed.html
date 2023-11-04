@@ -9,23 +9,26 @@
     <title>📅Daily Challenge</title>
     <meta name="viewport" content="width=device-width, initial-scale=0.5" />
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-    {{ error_message }}
-    <form id="form" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.formset.errors }}
-        <!-- Hidden Longitude and Latitude Fields (filled by the map click) -->
-        <input type="hidden" name="longitude" id="id_longitude" required>
-        <input type="hidden" name="latitude" id="id_latitude" required>
-        <div class="d-flex justify-content-between" id="guessMap">
-            <div class="flex-fill mr-2 text-center">  
-                <img src="{{ Challenge.image.url }}" id="image">
-            </div>
-            <div class="text-center" id="map" style="height: 500px; margin: 0 auto;"></div>
-            <br>
-        </div>
 
-        <button type="submit" value="Submit" id="guessButton" class="btn btn-primary mt-3 mx-auto d-block">Make a Guess</button>
-    </form>
+    <div class="d-flex justify-content-between" id="guessMap">
+        <div class="flex-fill mr-2 text-center">  
+            <img src="{{ Challenge.image.url }}" id="image">
+        </div>
+        <div class="text-center" id="map" style="height: 500px; margin: 0 auto;"></div>
+        <br>
+    </div>
+    <div>
+        Your guess was {{ Guess.distanceFromAnswer }} meters away from the actual location.
+    </div>
+    <div>
+        Your guess was at {{ Guess.latitude }}, {{ Guess.longitude }}.
+    </div>
+    <div>
+        The correct answer was {{ Challenge.latitude }}, {{ Challenge.longitude }}.
+    </div>
+    <div>
+        You earned {{ Guess.score }} points for this guess.
+    </div>    
     {% load static %}
       <!-- Google Maps Initialization -->
         <script>

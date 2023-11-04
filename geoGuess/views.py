@@ -7,12 +7,72 @@ from .models import Challenge, Guess, DailyChallenge
 from django.views import generic
 from django.shortcuts import render, redirect
 from .forms import ChallengeForm, GuessForm, ApproveChallengeForm
-import os
+import os, math, googlemaps
+
+# Uses Google Maps API to get the distance between two coordinates in METERS
+def get_distance(lat1, lon1, lat2, lon2):
+    gmaps = googlemaps.Client(key=os.environ.get('GOOGLE_MAPS_API_KEY'))
+    return gmaps.distance_matrix((lat1, lon1), (lat2, lon2))['rows'][0]['elements'][0]['distance']['value']
+
+# Calculates the score / 1000 based on the distance from the correct answer in METERS
+def calculate_score(distance):
+    max_score = 1000
+    max_score_range = 10
+    dropoff_rate = 400
+
+    # Max score is 1000, will give the max score if within 10 meters
+    return min(int(max_score * math.exp(-(distance - max_score_range) / dropoff_rate)), max_score)
+
+# Checks if the user has guessed a challenge
+def hasBeenGuessed(challenge, user):
+    return Guess.objects.filter(user=user, challenge=challenge).exists()
+
+def rating_calc(average_score, games_played):
+    # Determines how much weight to give to average score vs max score for leaderboard
+    weight = 0.8
+    return (weight * average_score) + ((1 - weight) * games_played) * 1000
+
+# Gets the leaderboard of players
+def get_leaderboard():
+    user_list = User.objects.all()
+    guess_list = Guess.objects.all()
+    user_stats = {}
+    for guess in guess_list:
+        username = guess.user.username
+        if username not in user_stats:
+            user_stats[username] = {"score": 0, "games_played": 0}
+
+        user_stats[username]["games_played"] += 1
+        user_stats[username]["score"] += guess.score
+
+    leaderboard = []
+    for user in user_list:
+        if(user.username in user_stats):
+            games_played = user_stats[user.username]["games_played"]
+            average_score = 0
+            if(games_played != 0):
+                average_score = user_stats[user.username]["score"] / games_played
+
+            # Calculate rating based on average score and games played (Can be changed in the future)
+            rating = rating_calc(average_score, games_played)
+
+            leaderboard.append({"name": user.first_name, "average_score": int(average_score), 
+                                "games_played": int(games_played), "rating": int(rating)})
+    return sorted(leaderboard, key=lambda x: x['rating'], reverse=True)
+
+# Gets the statistics for an individual player
+def get_player_stats(user):
+    guess_list = Guess.objects.filter(user=user)
+    games_played = guess_list.count()
+    average_score = 0
+    if(games_played != 0):
+        average_score = sum([guess.score for guess in guess_list]) / games_played
+
+    return {"games_played": games_played, "average_score": average_score, "rating": rating_calc(average_score, games_played)}
 
 # Create your views here.
 class Home(generic.TemplateView):
     template_name = "home.html"
-
 
 class AddChallengeView(LoginRequiredMixin, generic.CreateView):
     template_name = 'user/challenge.html'
@@ -51,8 +111,6 @@ class DailyChallengeListView(LoginRequiredMixin, generic.ListView):
     context_object_name = "daily_challenge_list"
 
     def get_queryset(self):
-        print(DailyChallenge.objects.all())
-        print(DailyChallenge.objects.all().count())
         return DailyChallenge.objects.all()
 
 # View to see a specific daily challenge
@@ -64,38 +122,46 @@ class DailyChallengeView(LoginRequiredMixin, generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['maps_api_key'] = os.environ.get('GOOGLE_MAPS_API_KEY')
-        context['Challenge'] = Challenge.objects.filter(self.get_object().challenge).last() #sets the information for the challenge being used
-        if self.template_name == "user/daily_challenge_seen.html":
-            context['Guess'] = Guess.objects.filter(user=self.request.user, challenge=self.get_object().challenge).first()
+        # Sets information for the challenge being used
+        context['Challenge'] = Challenge.objects.get(pk=self.get_object().challenge.pk)
+
+        print(self.get_template_names())
+        if 'user/daily_challenge_guessed.html' in self.get_template_names():
+            print('here')
+            context['Guess'] = Guess.objects.get(user=self.request.user, challenge=self.get_object().challenge)
         return context
 
     def post(self, request, *args, **kwargs):
-        self.object = None
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        if form.is_valid() and request.user.is_authenticated:
-            guess = form.save(commit=False)
-            guess.user = request.user
-            guess.challenge = request.challenge
+        longitude = request.POST.get('longitude')
+        latitude = request.POST.get('latitude')
+        challenge = self.get_object().challenge
+
+        if longitude is not '' and latitude is not '':
+            # TODO: add checks for the latitude and longitude to make sure they are valid
+            distance = get_distance(latitude, longitude, challenge.latitude, challenge.longitude)
+            if distance is None:
+                return HttpResponse("Internal Server Error")
+            score = calculate_score(distance)
+            guess = Guess(user=request.user, challenge=challenge, score=score, distanceFromAnswer=distance, longitude=longitude, latitude=latitude)
             guess.save()
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-        form.save(commit=True)
-        return redirect("home")   # Redirect to homepage or any other page after saving
-    def form_invalid(self, form):
-        return self.render_to_response(
-            self.get_context_data()
+            return redirect("daily_challenge", pk=self.get_object().pk)
+         
+        # TODO: can make this with less repeated code.
+        return render(
+            request,
+            self.template_name,
+            {
+                'Challenge': challenge,
+                'maps_api_key': os.environ.get('GOOGLE_MAPS_API_KEY'),
+                'error_message': 'Must select part of the map'
+            }
         )
+
     def get_template_names(self):
-        daily_challenge = self.get_object()
-        if(daily_challenge.hasBeenGuessed(self.request.user)):
+        if(hasBeenGuessed(self.get_object().challenge, self.request.user)):
             return ["user/daily_challenge_guessed.html"]
         
         return ["user/daily_challenge.html"]
-
 
 class MapsView(LoginRequiredMixin, TemplateView):
     template_name = 'user/maps.html'
@@ -121,34 +187,9 @@ class ViewSubmissions(LoginRequiredMixin, generic.ListView):
 class LeaderboardView(generic.ListView):
     template_name = "leaderboard.html"
     context_object_name = "leaderboard"
-    # Determines how much weight to give to average score vs max score for leaderboard
-    weight = 0.8
+    
     def get_queryset(self):
-        user_list = User.objects.all()
-        guess_list = Guess.objects.all()
-        user_stats = {}
-        for guess in guess_list:
-            username = guess.user.username
-            if username not in user_stats:
-                user_stats[username] = {"score": 0, "games_played": 0}
-
-            user_stats[username]["games_played"] += 1
-            user_stats[username]["score"] += guess.score
-
-        leaderboard = []
-        for user in user_list:
-            if(user.username in user_stats):
-                games_played = user_stats[user.username]["games_played"]
-                average_score = 0
-                if(games_played != 0):
-                    average_score = user_stats[user.username]["score"] / games_played
-
-                # Calculate rating based on average score and games played (Can be changed in the future)
-                rating = (self.weight * average_score) + ((1 - self.weight) * games_played) * 1000
-
-                leaderboard.append({"name": user.first_name, "average_score": int(average_score), 
-                                    "games_played": int(games_played), "rating": int(rating)})
-        return sorted(leaderboard, key=lambda x: x['rating'], reverse=True)
+        return get_leaderboard()
 
 ##########################################################################3
 #Admin Views
@@ -163,8 +204,6 @@ class AdminUsersView(LoginRequiredMixin, generic.ListView):
     
     # def post(self, request, *args, **kwargs):
     #     if 'deleteUser' in request.POST:
-
-        
 
 class ApproveSubmissionsView(LoginRequiredMixin, generic.ListView):
     template_name = "admin/approveSubmissions.html"
