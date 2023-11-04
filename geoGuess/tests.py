@@ -287,3 +287,56 @@ class GuessModelTestCase(TestCase):
         # Check the __str__ representation
         self.assertEqual(str(guess), f"Guess {guess.pk} by {self.user.username}")
 
+
+class GuessModelValidationTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user('testuser', 'test@example.com', 'password123')
+        self.challenge = Challenge.objects.create(
+            user=self.user,
+            image='path/to/image.jpg',
+            longitude=123.45,
+            latitude=67.89,
+            approve_status=True
+        )
+
+    def test_negative_attempts_raises_validation_error(self):
+        guess = Guess(user=self.user, challenge=self.challenge, numOfAttempts=-1)
+        with self.assertRaises(ValidationError):
+            guess.full_clean()
+
+    def test_negative_score_raises_validation_error(self):
+        guess = Guess(user=self.user, challenge=self.challenge, score=-1)
+        with self.assertRaises(ValidationError):
+            guess.full_clean()
+
+    def test_negative_distance_raises_validation_error(self):
+        guess = Guess(user=self.user, challenge=self.challenge, distanceFromAnswer=-1.0)
+        with self.assertRaises(ValidationError):
+            guess.full_clean()
+
+
+class GuessRelationTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user('testuser', 'test@example.com', 'password123')
+        self.challenge = Challenge.objects.create(
+            user=self.user,
+            image='path/to/image.jpg',
+            longitude=123.45,
+            latitude=67.89,
+            approve_status=True
+        )
+        self.guess = Guess.objects.create(
+            user=self.user,
+            challenge=self.challenge,
+            numOfAttempts=1
+        )
+
+    def test_deleting_user_deletes_guess(self):
+        self.user.delete()
+        with self.assertRaises(Guess.DoesNotExist):
+            Guess.objects.get(pk=self.guess.pk)
+
+    def test_deleting_challenge_deletes_guess(self):
+        self.challenge.delete()
+        with self.assertRaises(Guess.DoesNotExist):
+            Guess.objects.get(pk=self.guess.pk)
