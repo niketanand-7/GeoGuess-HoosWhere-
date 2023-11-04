@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from .models import Challenge, Guess
 from django.views import generic
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ChallengeForm, GuessForm, ApproveChallengeForm
 import os
 
@@ -140,11 +140,17 @@ class ApproveSubmissionsView(LoginRequiredMixin, generic.ListView):
     form_name = ApproveChallengeForm
     context_object_name = "challenge_list"
 
-    def post(self, request, *args, **kwargs):
-        approved_challenge = request.POST.getlist('approved_challenges')
-        Challenge.objects.filter(id__in=approved_challenge).update(approve_status=True)
-        challenge_list = Challenge.objects.filter(approve_status=False)
-        return render(request, "admin/approveSubmissions.html", {'challenge_list': challenge_list})
-
     def get_queryset(self):
         return Challenge.objects.filter(approve_status=False)
+    
+    def post(self, request):
+        challenge_id = request.POST.get('challenge_id')
+        challenge = get_object_or_404(Challenge, id=challenge_id)
+        return render(request, self.template_name, {'challenge': challenge})
+    
+# def get_challenge_details(request, challenge_id):
+#         challenge = get_object_or_404(Challenge, pk=challenge_id)
+#         return {'challenge': challenge}
+
+
+ 
