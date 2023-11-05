@@ -141,9 +141,11 @@ class ChallengeModelTest(TestCase):
         self.user = User.objects.create_user(username='testuser', password='test')
         self.challenge = Challenge.objects.create(user=self.user,latitude=38,longitude=-78.3)
     def test_add_challenge_view(self):
+        image_path = "geoGuess/static/chemistryBuilding_image.jpg"
         response = self.client.post(reverse('challenge'), data =
         {
-            'image': SimpleUploadedFile("test.jpg",b"file-content"),
+            'image': SimpleUploadedFile(name='test_image.jpg', content=open(image_path, 'rb').read(),
+                                        content_type='image/jpeg'),
             "longitude": -78.32,
             "latitude": 32.133
         })
@@ -157,7 +159,7 @@ class ChallengeModelTest(TestCase):
         self.assertEqual(Challenge.objects.count(), 0) #checking if Challenge is be added w/ no data
 
     def test_challenge_form_valid(self):
-        image_path = "/static/chemistryBuilding_image.jpg"
+        image_path = "geoGuess/static/chemistryBuilding_image.jpg"
         form_data = {
             'image': SimpleUploadedFile(name='test_image.jpg', content=open(image_path, 'rb').read(),
                                         content_type='image/jpeg'),
