@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator
 
 class Challenge(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # Link to the user who created the challenge
@@ -20,8 +21,8 @@ class Guess(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE)
     numOfAttempts = models.IntegerField(default=0)
-    score = models.IntegerField(default=0)
-    distanceFromAnswer = models.FloatField(default=0)
+    score = models.IntegerField(default=0, validators=[MinValueValidator(0)])
+    distanceFromAnswer = models.FloatField(default=0, validators=[MinValueValidator(0)])
     
     def __str__(self):
         return f"Guess {self.pk} by {self.user.username}"

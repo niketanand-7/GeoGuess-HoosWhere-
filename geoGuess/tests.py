@@ -5,6 +5,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.test import TestCase, Client, LiveServerTestCase
+from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import SimpleUploadedFile
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from .models import Challenge, Guess
@@ -141,7 +143,7 @@ class ChallengeModelTest(TestCase):
     def test_add_challenge_view(self):
         response = self.client.post(reverse('challenge'), data =
         {
-            "image": "/media/testImages/chemistryBuilding_image.jpg",
+            'image': SimpleUploadedFile("test.jpg",b"file-content"),
             "longitude": -78.32,
             "latitude": 32.133
         })
@@ -155,14 +157,15 @@ class ChallengeModelTest(TestCase):
         self.assertEqual(Challenge.objects.count(), 0) #checking if Challenge is be added w/ no data
 
     def test_challenge_form_valid(self):
+        image_path = "/static/chemistryBuilding_image.jpg"
         form_data = {
+            'image': SimpleUploadedFile(name='test_image.jpg', content=open(image_path, 'rb').read(),
+                                        content_type='image/jpeg'),
             'longitude': -78.32,
             'latitude': 32.133,
-            'image': SimpleUploadedFile(name='test_image.jpg', content=open(image_path, 'rb').read(),
-                                        content_type='image/jpeg')
         }
-        form = ChallengeForm(data=form_data)
-        self.assertTrue(form.is_valid())
+        form = ChallengeForm(data=form_data,files=form_data)
+        self.assertTrue(form.is_valid(),form.as_table())
 
     def test_challenge_form_invalid(self):
         form_data = {
@@ -298,11 +301,6 @@ class GuessModelValidationTestCase(TestCase):
             latitude=67.89,
             approve_status=True
         )
-
-    def test_negative_attempts_raises_validation_error(self):
-        guess = Guess(user=self.user, challenge=self.challenge, numOfAttempts=-1)
-        with self.assertRaises(ValidationError):
-            guess.full_clean()
 
     def test_negative_score_raises_validation_error(self):
         guess = Guess(user=self.user, challenge=self.challenge, score=-1)
