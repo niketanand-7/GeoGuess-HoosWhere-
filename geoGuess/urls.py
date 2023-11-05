@@ -20,5 +20,5 @@ urlpatterns = [
     path('challenge_form/', AddChallengeView.as_view(), name="challenge"),
     path('leaderboard/', LeaderboardView.as_view(), name="leaderboard"),
 
-    # path('get_challenge_details/<int:challenge_id>/', views.get_challenge_details, name='get_challenge_details'),
+    path('challenge_feedback/<int:challenge_id>/', views.get_admin_feedback, name='admin_feedback'),
 ]

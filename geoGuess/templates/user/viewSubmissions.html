@@ -7,18 +7,26 @@
         <ul class="list-group mt-4" style="max-width: 600px">
           {% for Challenge in challenges %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
-            <img src="{{ Challenge.image.url }}" style="margin: 0 auto; height:75%; width: 35%">
-            {% if Challenge.approve_status %}
-              <a href="" type="button" class="btn btn-success btn-sm"> Approved </a>
-            {% else %}
-              <a href="" type="button" class="btn btn-danger btn-sm"> Waiting for Approval</a>
-            {% endif %}
-            <!-- TODO: make this button link to django admin or other means of editing users -->
-          </li>
+              <img src="{{ Challenge.image.url }}" style="margin: 0 auto; height:75%; width: 35%">
+              {% if Challenge.approve_status %}
+                <div class="btn btn-success btn-sm" style="pointer-events: none;"> Approved </div>
+              {% else %}
+                {% if Challenge.approval_feedback == '' %}
+                  <div class="btn btn-warning btn-sm" style="pointer-events: none;"> Waiting for Approval</div>
+                {% else %}
+                  <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="popover" data-bs-title="Denial Feedback" data-bs-content="{{Challenge.approval_feedback}}">Denied</button>
+                {% endif %}
+              {% endif %}
+            </li>
           {% empty %}
           <li class="list-group-item d-flex justify-content-between align-items-center"> You have no submissions </li>
           {% endfor %}
         </ul>
       </div>
 </div>
+
+<script>
+  let popoverTriggerItem = document.querySelectorAll('[data-bs-toggle="popover"]')
+  let popoverList = [...popoverTriggerItem].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+</script>
 {% endblock content %}
