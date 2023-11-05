@@ -221,7 +221,6 @@ class ChallengeGuessIntegrationTest(TestCase):
         guess = Guess.objects.create(
             user=self.user,
             challenge=self.challenge,
-            numOfAttempts=1,
             score=100,
             distanceFromAnswer=0.0
         )
@@ -230,7 +229,6 @@ class ChallengeGuessIntegrationTest(TestCase):
         self.assertEqual(self.challenge.guess_set.first(), guess)
 
         # Test the Guess attributes
-        self.assertEqual(guess.numOfAttempts, 1)
         self.assertEqual(guess.score, 100)
         self.assertEqual(guess.distanceFromAnswer, 0.0)
 
@@ -250,7 +248,6 @@ class GuessModelTestCase(TestCase):
         guess = Guess.objects.create(
             user=self.user,
             challenge=self.challenge,
-            numOfAttempts=1,
             score=100,
             distanceFromAnswer=0.0
         )
@@ -260,7 +257,6 @@ class GuessModelTestCase(TestCase):
         # Check that the Guess has been correctly saved and its attributes are correct
         self.assertEqual(saved_guess.user, self.user)
         self.assertEqual(saved_guess.challenge, self.challenge)
-        self.assertEqual(saved_guess.numOfAttempts, 1)
         self.assertEqual(saved_guess.score, 100)
         self.assertEqual(saved_guess.distanceFromAnswer, 0.0)
 
@@ -270,7 +266,6 @@ class GuessModelTestCase(TestCase):
             challenge=self.challenge
         )
 
-        guess.numOfAttempts += 1
         guess.score = 80
         guess.distanceFromAnswer = 20.0
         guess.save()
@@ -278,7 +273,6 @@ class GuessModelTestCase(TestCase):
         updated_guess = Guess.objects.get(pk=guess.pk)
 
         # Check that the fields have been updated correctly
-        self.assertEqual(updated_guess.numOfAttempts, 1)
         self.assertEqual(updated_guess.score, 80)
         self.assertEqual(updated_guess.distanceFromAnswer, 20.0)
 
@@ -328,7 +322,6 @@ class GuessRelationTestCase(TestCase):
         self.guess = Guess.objects.create(
             user=self.user,
             challenge=self.challenge,
-            numOfAttempts=1
         )
 
     def test_deleting_user_deletes_guess(self):

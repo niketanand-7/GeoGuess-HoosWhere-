@@ -27,8 +27,8 @@ class DailyChallenge(models.Model):
 class Guess(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE)
-    score = models.IntegerField(default=0)                              # Store the score / 1000         
-    distanceFromAnswer = models.FloatField(default=0)                   # Store in meters
+    score = models.IntegerField(default=0, validators=[MinValueValidator(limit_value=0, message='Score must be greater than or equal to 0')])# Store the score / 1000         
+    distanceFromAnswer = models.FloatField(default=0, validators=[MinValueValidator(limit_value=0.0, message='Distance must be greater than or equal to 0')])# Store in meters
     longitude = models.FloatField(default=0)                            # Store the guessed coordinates
     latitude = models.FloatField(default=0)                             # Store the  coordinates
 
