@@ -14,8 +14,5 @@ class GuessForm(forms.ModelForm):
 class ApproveChallengeForm(forms.ModelForm):
     class Meta:
         model = Challenge
-        fields = ['approve_status']
-        widgets = {
-            'approve_status': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-        }
+        fields = ['approve_status', 'approval_feedback']
     

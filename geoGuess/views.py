@@ -1,11 +1,13 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
+from django.db.models import Q
 from .models import Challenge, Guess, DailyChallenge
 from django.views import generic
-from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ChallengeForm, GuessForm, ApproveChallengeForm
 import os, math, googlemaps
 
@@ -193,7 +195,7 @@ class LeaderboardView(generic.ListView):
 
 ##########################################################################3
 #Admin Views
-class AdminUsersView(LoginRequiredMixin, generic.ListView):
+class AdminUsersView(LoginRequiredMixin, UserPassesTestMixin, generic.ListView):
     template_name = "admin/users.html"
     login_url='/'
     context_object_name = "user_list"
@@ -201,21 +203,44 @@ class AdminUsersView(LoginRequiredMixin, generic.ListView):
     #get all google registered users
     def get_queryset(self):
         return User.objects.all()
+
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.is_staff
     
     # def post(self, request, *args, **kwargs):
     #     if 'deleteUser' in request.POST:
 
-class ApproveSubmissionsView(LoginRequiredMixin, generic.ListView):
+        
+class ApproveSubmissionsView(LoginRequiredMixin, UserPassesTestMixin, generic.ListView):
     template_name = "admin/approveSubmissions.html"
     login_url='/'
     form_name = ApproveChallengeForm
     context_object_name = "challenge_list"
 
-    def post(self, request, *args, **kwargs):
-        approved_challenge = request.POST.getlist('approved_challenges')
-        Challenge.objects.filter(id__in=approved_challenge).update(approve_status=True)
-        challenge_list = Challenge.objects.filter(approve_status=False)
-        return render(request, "admin/approveSubmissions.html", {'challenge_list': challenge_list})
-
     def get_queryset(self):
-        return Challenge.objects.filter(approve_status=False)
+        return Challenge.objects.filter(Q(approve_status=False) & Q(approval_feedback=''))
+
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.is_staff
+    
+    def post(self, request):
+        challenge_id = request.POST.get('challenge_id')
+        challenge = get_object_or_404(Challenge, id=challenge_id)
+        return render(request, self.template_name, {'challenge': challenge})
+    
+def get_admin_feedback(request, challenge_id):
+    challenge = get_object_or_404(Challenge, pk=challenge_id)
+
+    if 'approved' in request.POST:
+        challenge.approve_status=True
+        challenge.save()
+
+    if 'denied' in request.POST:
+        feedback = request.POST.get('feedback')
+        challenge.approval_feedback = feedback
+        challenge.save()
+
+    return HttpResponseRedirect(reverse('approve_submissions'))
+
+
+ 
