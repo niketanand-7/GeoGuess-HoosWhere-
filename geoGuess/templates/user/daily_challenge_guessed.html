@@ -43,28 +43,15 @@
                 };
 
                 map = new google.maps.Map(document.getElementById("map"), mapOptions);
-
-                google.maps.event.addListener(map, 'click', function (event) {
-                    placeMarker(event.latLng);
-                });
-            }
-
-            function placeMarker(location) {
-                if (marker) {  // if marker exists, remove it
-                    marker.setMap(null);
-                }
+                var latitude = {{ Guess.latitude }};
+                var longitude = {{ Guess.longitude }};
                 marker = new google.maps.Marker({
-                    position: location,
+                    visible: true,
+                    position: new google.maps.LatLng(latitude,longitude),
                     map: map
                 });
-
-                // Update the hidden form fields with the clicked coordinates
-                document.getElementById('id_longitude').value = location.lng();
-                document.getElementById('id_latitude').value = location.lat();
             }
 
-            // TO-DO: add error check if marker isn't placed
-            // This function will be called once the Google Maps script is loaded
             initialize();
         </script>
 </body>
