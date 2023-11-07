@@ -8,13 +8,15 @@ from .models import Challenge, Guess, DailyChallenge
 from django.views import generic
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
+from geopy.distance import geodesic
 from .forms import ChallengeForm, GuessForm, ApproveChallengeForm
 import os, math, googlemaps
 
 # Uses Google Maps API to get the distance between two coordinates in METERS
-def get_distance(lat1, lon1, lat2, lon2):
-    gmaps = googlemaps.Client(key=os.environ.get('GOOGLE_MAPS_API_KEY'))
-    return gmaps.distance_matrix((lat1, lon1), (lat2, lon2))['rows'][0]['elements'][0]['distance']['value']
+def get_distance(lat1,lon1,lat2,lon2):
+    return geodesic((lat1,lon1),(lat2,lon2)).meters
+    #gmaps = googlemaps.Client(key=os.environ.get('GOOGLE_MAPS_API_KEY'))
+    #return gmaps.distance_matrix((lat1, lon1), (lat2, lon2))['rows'][0]['elements'][0]['distance']['value']
 
 # Calculates the score / 1000 based on the distance from the correct answer in METERS
 def calculate_score(distance):
@@ -243,4 +245,4 @@ def get_admin_feedback(request, challenge_id):
     return HttpResponseRedirect(reverse('approve_submissions'))
 
 
- 
+
