@@ -46,12 +46,12 @@
     var form = document.getElementById("form")
 
     function initialize() {
-        var mapOptions = {
-            center: new google.maps.LatLng(0, 0),
-            zoom: 2
-        };
+        const defaultLocation = {lat: 38.029305, lng: -78.476677}; //can change locationvar mapOptions = {
 
-        map = new google.maps.Map(document.getElementById("map"), mapOptions);
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: defaultLocation,
+            zoom: 14
+        });
 
         google.maps.event.addListener(map, 'click', function (event) {
             placeMarker(event.latLng);
