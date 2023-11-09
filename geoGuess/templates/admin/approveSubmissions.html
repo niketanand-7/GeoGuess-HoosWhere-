@@ -1,7 +1,4 @@
 {% extends 'base.html' %}
-
-
-
 {% block content %}
 <title>Approve Submissions</title>
 <div class="container p-5 d-flex align-items-center justify-content-center">
@@ -30,6 +27,7 @@
                             <div class="modal-body">
                                 Would you like to approve or deny the submission?
                                 <img src="{{Challenge.image.url}}" style="max-width: 100%; max-height: 100%; display: block; margin: 0 auto;">
+                                <div class="map-container" id="map_{{ Challenge.id }}" data-lat="{{ Challenge.latitude }}" data-lng="{{ Challenge.longitude }}" data-id="map_{{ Challenge.id }}" style="height: 400px; margin: 0 auto;"></div>
                                 <div class="">
                                     Latitude: {{ Challenge.latitude|floatformat:5 }}
                                     Longitude: {{ Challenge.longitude|floatformat:5 }}
@@ -60,5 +58,27 @@
             </ul>
         </div>
     </div>
+    <script>
+        function initMap() {
+            var mapContainers = document.querySelectorAll('.map-container');
+
+            mapContainers.forEach(function(container) {
+                var latitude = parseFloat(container.getAttribute('data-lat'));
+                var longitude = parseFloat(container.getAttribute('data-lng'));
+                var mapId = container.getAttribute('data-id');
+
+                var mapOptions = {
+                center: { lat: latitude, lng: longitude },
+                zoom: 14
+                };
+                var map = new google.maps.Map(document.getElementById(mapId), mapOptions);
+                var marker = new google.maps.Marker({
+                    position: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
+                    map: map
+                });
+            });
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ maps_api_key }}&callback=initMap&v=weekly" async defer></script>
 </div>
 {% endblock content %}

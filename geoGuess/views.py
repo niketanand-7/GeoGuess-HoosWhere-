@@ -14,9 +14,9 @@ import os, math, googlemaps
 
 # Uses Google Maps API to get the distance between two coordinates in METERS
 def get_distance(lat1,lon1,lat2,lon2):
-    return geodesic((lat1,lon1),(lat2,lon2)).meters
-    #gmaps = googlemaps.Client(key=os.environ.get('GOOGLE_MAPS_API_KEY'))
-    #return gmaps.distance_matrix((lat1, lon1), (lat2, lon2))['rows'][0]['elements'][0]['distance']['value']
+    #return geodesic((lat1,lon1),(lat2,lon2)).meters
+    gmaps = googlemaps.Client(key=os.environ.get('GOOGLE_MAPS_API_KEY'))
+    return gmaps.distance_matrix((lat1, lon1), (lat2, lon2))['rows'][0]['elements'][0]['distance']['value']
 
 # Calculates the score / 1000 based on the distance from the correct answer in METERS
 def calculate_score(distance):
@@ -218,6 +218,11 @@ class ApproveSubmissionsView(LoginRequiredMixin, UserPassesTestMixin, generic.Li
     login_url='/'
     form_name = ApproveChallengeForm
     context_object_name = "challenge_list"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['maps_api_key'] = os.environ.get('GOOGLE_MAPS_API_KEY')
+        return context
 
     def get_queryset(self):
         return Challenge.objects.filter(Q(approve_status=False) & Q(approval_feedback=''))
