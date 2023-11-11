@@ -17,6 +17,15 @@
           height: 80px;
           display: block;
         }
+        li a {
+            text-decoration: none;
+            display: block; 
+        }
+
+        /* Style for the link hover effect */
+        li:hover {
+            background-color: #ddd;
+        }
       </style>
     <div class="container mt-5">
         <div class="row justify-content-center">
@@ -51,12 +60,14 @@
                     <h2>Recent Scores</h2>
                     <ul class="list-group mt-4" style="max-width: 600px">
                     {% for guess in recent_guesses %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <img src="{{ guess.challenge.image.url }}" style="width: 80px;height: 80px;display: block;">
-                            <h2>
-                                {{ guess.score }}
-                            </h2>
-                        </li>
+                        <a href="{% url 'daily_challenge' guess.challenge.id %}" style="text-decoration: none;">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <img src="{{ guess.challenge.image.url }}" style="width: 80px;height: 80px;display: block;">
+                                <h2>
+                                    {{ guess.score }}
+                                </h2>
+                            </li>
+                        </a>
                     {% endfor %}
                     </ul>
                 </div>
