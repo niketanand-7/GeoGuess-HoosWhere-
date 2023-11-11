@@ -4,7 +4,7 @@ from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.urls import reverse
-from django.test import TestCase, Client, LiveServerTestCase
+from django.test import TestCase, Client, LiveServerTestCase, RequestFactory
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from selenium import webdriver
@@ -333,3 +333,16 @@ class GuessRelationTestCase(TestCase):
         self.challenge.delete()
         with self.assertRaises(Guess.DoesNotExist):
             Guess.objects.get(pk=self.guess.pk)
+
+class LeaderBoardTests(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory
+        self.user = User.objects.create_user(
+            username="test", email="test@gmail.com", password="pass"
+        )
+        #test needs at least one daily challenge in the system!!
+        #request = self.factory.get("/daily_challenge/3/")
+
+
+
+
