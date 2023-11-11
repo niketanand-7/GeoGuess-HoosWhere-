@@ -10,3 +10,4 @@ django-storages
 googlemaps
 selenium
 validators
+geopy
