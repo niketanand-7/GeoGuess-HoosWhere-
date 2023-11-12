@@ -31,36 +31,48 @@
         <h1 class="text-center">Control Users</h1>
         <ul class="list-group mt-4" style="max-width: 600px">
           {% for user in user_list%}
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            {{user}}
-            <!-- TODO: make this button link to django admin or other means of editing users -->
-            <div>
-              <button type="button" class="btn btn-warning btn-sm mx-2">Edit Auth</button>
-              <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal_{{user.id}}">Remove</button>
-            </div> 
-          </li>
-
-          <!-- DELETE Modal -->
-          <div class="modal fade" id="deleteModal_{{user.id}}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h1 class="modal-title fs-5" id="exampleModalLabel">Delete User Confirmation</h1>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                  Are you sure that you would like to remove '{{user}}' from HoosWhere? This will remove all leaderboard and challenge data from their account.
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                  <form method="post">
-                    {% csrf_token %}
-                    <button type="button" name='deleteUser' value={{user}} class="btn btn-danger">Remove</button>
-                  </form>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{user}}
+              <div>
+                <button type="button" class="btn btn-warning btn-sm mx-2" data-bs-toggle="modal" data-bs-target="#editModal_{{user.id}}">See Auth</button>
+                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal_{{user.id}}">Remove</button>
+              </div> 
+            </li>
+            <!-- DELETE Modal -->
+            <div class="modal fade" id="deleteModal_{{user.id}}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Delete User Confirmation</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    Are you sure that you would like to remove '{{user}}' from HoosWhere? This will remove all leaderboard and challenge data from their account.
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form method="post" action="{% url 'user_edit' user_id=user.id %}">
+                      {% csrf_token %}
+                      <button type="submit" name='deleteUser' class="btn btn-danger">Remove</button>
+                    </form>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+              <!-- EDIT MODAL -->
+            <div class="modal fade" id="editModal_{{user.id}}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">User Auth Level</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    '{{user}}' has auth level of {% if user.is_superuser %}admin {% else %} regular user{% endif %}. Their auth level can be edited at the django amin page.
+                  </div>
+                </div>
+              </div>
+            </div>
           {% endfor %}
         </ul>
       </div>

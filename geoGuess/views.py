@@ -134,6 +134,16 @@ class AdminUsersView(LoginRequiredMixin, generic.ListView):
     # def post(self, request, *args, **kwargs):
     #     if 'deleteUser' in request.POST:
 
+def edit_user(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+
+    if 'editUser' in request.POST:
+        user.save()
+
+    if 'deleteUser' in request.POST:
+        user.delete()
+        
+    return HttpResponseRedirect(reverse('admin_users'))
         
 
 class ApproveSubmissionsView(LoginRequiredMixin, generic.ListView):

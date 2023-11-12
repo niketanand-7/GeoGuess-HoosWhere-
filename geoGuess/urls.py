@@ -20,5 +20,6 @@ urlpatterns = [
     path('challenge_form/', AddChallengeView.as_view(), name="challenge"),
     path('leaderboard/', LeaderboardView.as_view(), name="leaderboard"),
 
+    path('edit_user/<int:user_id>/', views.edit_user, name='user_edit'),
     path('challenge_feedback/<int:challenge_id>/', views.get_admin_feedback, name='admin_feedback'),
 ]
