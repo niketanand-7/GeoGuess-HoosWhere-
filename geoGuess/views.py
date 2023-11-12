@@ -46,37 +46,37 @@ class AddChallengeView(LoginRequiredMixin, generic.CreateView):
             self.get_context_data()
         )
     
-class MapsView(LoginRequiredMixin, TemplateView):
-    template_name = 'user/maps.html'
-    login_url = '/'
+# class MapsView(LoginRequiredMixin, TemplateView):
+#     template_name = 'user/maps.html'
+#     login_url = '/'
 
-    form_class = GuessForm
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['maps_api_key'] = os.environ.get('GOOGLE_MAPS_API_KEY')
-        context['Challenge'] = Challenge.objects.filter(approve_status=True).first() #sets the information for the challenge being used
-        return context
+#     form_class = GuessForm
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['maps_api_key'] = os.environ.get('GOOGLE_MAPS_API_KEY')
+#         context['Challenge'] = Challenge.objects.filter(approve_status=True).first() #sets the information for the challenge being used
+#         return context
 
-    def post(self, request, *args, **kwargs):
-        self.object = None
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        if form.is_valid() and request.user.is_authenticated:
-            guess = form.save(commit=False)
-            guess.user = request.user
-            guess.challenge = request.challenge
-            guess.save()
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-        form.save(commit=True)
-        return redirect("home")   # Redirect to homepage or any other page after saving
-    def form_invalid(self, form):
-        return self.render_to_response(
-            self.get_context_data()
-        )
+#     def post(self, request, *args, **kwargs):
+#         self.object = None
+#         form_class = self.get_form_class()
+#         form = self.get_form(form_class)
+#         if form.is_valid() and request.user.is_authenticated:
+#             guess = form.save(commit=False)
+#             guess.user = request.user
+#             guess.challenge = request.challenge
+#             guess.save()
+#             return self.form_valid(form)
+#         else:
+#             return self.form_invalid(form)
+#     def form_valid(self, form):
+#         self.object = form.save(commit=False)
+#         form.save(commit=True)
+#         return redirect("home")   # Redirect to homepage or any other page after saving
+#     def form_invalid(self, form):
+#         return self.render_to_response(
+#             self.get_context_data()
+#         )
 
 class ViewSubmissions(LoginRequiredMixin, generic.ListView):
     template_name = "user/viewSubmissions.html"

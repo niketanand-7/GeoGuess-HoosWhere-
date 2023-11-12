@@ -13,7 +13,6 @@ urlpatterns = [
     #these two are part of Google Oauth
     path('accounts/', include('allauth.urls')),
     path('logout', LogoutView.as_view()),
-    path('maps/', MapsView.as_view(), name="maps"),
     path('submissions/', ViewSubmissions.as_view(), name="submissions"),
     path('admin_users/', AdminUsersView.as_view(), name="admin_users"),
     path('approve_submissions/', ApproveSubmissionsView.as_view(), name="approve_submissions"),
