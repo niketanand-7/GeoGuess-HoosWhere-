@@ -5,7 +5,7 @@ from django.contrib.auth.views import LogoutView
 
 from .import views
 from .views import Home, AdminUsersView, AddChallengeView 
-from .views import MapsView, ViewSubmissions, ApproveSubmissionsView, LeaderboardView, DailyChallengeView, DailyChallengeListView
+from .views import ViewSubmissions, ApproveSubmissionsView, LeaderboardView, DailyChallengeView, DailyChallengeListView
 
 
 urlpatterns = [
