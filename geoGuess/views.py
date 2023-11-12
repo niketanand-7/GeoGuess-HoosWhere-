@@ -121,7 +121,7 @@ class DailyChallengeListView(LoginRequiredMixin, generic.ListView):
     context_object_name = "daily_challenge_list"
 
     def get_queryset(self):
-        return DailyChallenge.objects.all()
+        return DailyChallenge.objects.filter(challenge__approve_status=True)
 
 # View to see a specific daily challenge
 class DailyChallengeView(LoginRequiredMixin, generic.DetailView):
