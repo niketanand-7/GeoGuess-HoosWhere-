@@ -3,6 +3,7 @@
 
 
 {% block content %}
+{% load static %}
 <title>Approve Submissions</title>
 <div class="container p-5 d-flex align-items-center justify-content-center">
     <div style="width: 500px">
@@ -29,46 +30,16 @@
                             <div class="modal-body">
                                 Would you like to approve or deny the submission?
                                 <img src="{{Challenge.image.url}}" style="max-width: 100%; max-height: 100%; display: block; margin: 0 auto;">
-                                <div class="">
-                                    {% load static %}
-                                <!-- Google Maps Initialization -->
-                                    <script>
-                                        var map;
-                                        var marker;
-                                        var form = document.getElementById("form")
-
-                                        function initialize() {
-                                            var mapOptions = {
-                                                center: new google.maps.LatLng(-45.132456, 34.13),
-                                                zoom: 15
-                                            };
-
-                                            map = new google.maps.Map(document.getElementById("map"), mapOptions);
-
-                                            google.maps.event.addListener(map, 'click', function (event) {
-                                                placeMarker(event.latLng);
-                                            });
-                                        }
-
-                                        function placeMarker(location) {
-                                            if (marker) {  // if marker exists, remove it
-                                                marker.setMap(null);
-                                            }
-                                            marker = new google.maps.Marker({
-                                                position: location,
-                                                map: map
-                                            });
-
-                                            // Update the hidden form fields with the clicked coordinates
-                                            document.getElementById('id_longitude').value = location.lng();
-                                            document.getElementById('id_latitude').value = location.lat();
-                                        }
-
-                                        // TO-DO: add error check if marker isn't placed
-                                        // This function will be called once the Google Maps script is loaded
-                                        initialize();
-                                    </script>
-                                </div>
+                                <div id="map_{{Challenge.id}}" class="text-center"></div>
+                                <script>
+                                    document.addEventListener("DOMContentLoaded", function () {
+                                        initializeMap(
+                                            "{{ Challenge.id }}",
+                                            "{{ Challenge.latitude }}",
+                                            "{{ Challenge.longitude }}"
+                                        );
+                                    });
+                                </script>
                             </div>
                             <div class="modal-footer">
                                 <form method="post" action="{% url 'admin_feedback' challenge_id=Challenge.id %}" style="width: 100%;">
@@ -96,4 +67,29 @@
         </div>
     </div>
 </div>
+
+<!-- Google Maps Initialization -->
+<script>
+    function initializeMap(challengeId, latitude, longitude) {
+        function initialize() {
+            var map;
+            var marker;
+
+            var mapOptions = {
+                center: new google.maps.LatLng(-45.132456, 34.13),
+                zoom: 15,
+                scroll: null,
+            };
+
+            map = new google.maps.Map(document.getElementById("map_" + challengeId), mapOptions);
+
+            marker = new google.maps.Marker({
+                position: new google.maps.LatLng(latitude, longitude),
+                map: map
+            });
+        }
+        initialize();
+    }
+    
+</script>
 {% endblock content %}
