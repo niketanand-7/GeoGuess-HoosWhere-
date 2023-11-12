@@ -1,16 +1,85 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
+<style>
+  .challenge-tile {
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      position: relative;
+      text-decoration: none;
+      color: inherit;
+      margin-bottom: 16px; /* space between the current challenge and the list */
+  }
+
+  .challenge-tile.large {
+      width: 50%; /* full width */
+      height: 300px; /* larger height */
+      margin: 0 auto;
+      display: block;
+  }
+
+  .challenge-tile.small {
+      width: 200px; /* or whatever width you want for the smaller tiles */
+      height: 150px; /* fixed height for the smaller tiles */
+  }
+
+  .challenge-image {
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      filter: blur(8px);
+  }
+
+  .challenge-date {
+      padding: 8px;
+      text-align: center;
+      background-color: rgba(255, 255, 255, 0.85); /* semi-transparent overlay */
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+  }
+
+  .challenge-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px; /* space between tiles */
+      padding: 0;
+      list-style: none;
+      margin-top: 16px; /* space after the current challenge */
+  }
+</style>
+
 <body>
     <title>📅Daily Challenges</title>
-    {% load static %}
     <link rel="stylesheet" href="{% static 'geoGuess.css' %}" type="text/css" />
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <ul>
+    
+    <!-- Current Day's Challenge -->
+    {% with current_day_challenge=daily_challenge_list|first %}
+    <div class="challenge-tile large">
+        <a href="{% url 'daily_challenge' current_day_challenge.id %}">
+            <div class="challenge-image" style="background-image: url('{{ current_day_challenge.challenge.image.url }}');"></div>
+            <div class="challenge-date">{{ current_day_challenge.timestamp|date:"F d, Y" }}</div>
+        </a>
+    </div>
+    {% endwith %}
+
+    <!-- Previous Challenges -->
+    <ul class="challenge-list">
         {% for daily_challenge in daily_challenge_list %}
-        <li>
-            <a href="{% url 'daily_challenge' daily_challenge.id %}">{{ forloop.counter }}</a>
+        {% if not forloop.first %} <!-- Skip the first one since it's already displayed above -->
+        <li class="challenge-tile small">
+            <a href="{% url 'daily_challenge' daily_challenge.id %}">
+                <div class="challenge-image" style="background-image: url('{{ daily_challenge.challenge.image.url }}');"></div>
+                <div class="challenge-date">{{ daily_challenge.timestamp|date:"F d, Y" }}</div>
+            </a>
         </li>
+        {% endif %}
+        {% empty %}
+        <li>No previous daily challenges available.</li>
         {% endfor %}
     </ul>
 </body>

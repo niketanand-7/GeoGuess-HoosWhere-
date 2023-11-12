@@ -5,7 +5,7 @@ from django.contrib.auth.views import LogoutView
 
 from .import views
 from .views import Home, AdminUsersView, AddChallengeView 
-from .views import ViewSubmissions, ApproveSubmissionsView, LeaderboardView, DailyChallengeView, DailyChallengeListView
+from .views import ViewSubmissions, ApproveSubmissionsView, LeaderboardView, DailyChallengeView, DailyChallengeListView, ProfileView
 
 
 urlpatterns = [
@@ -23,5 +23,6 @@ urlpatterns = [
     path('leaderboard/', LeaderboardView.as_view(), name="leaderboard"),
 
     path('edit_user/<int:user_id>/', views.edit_user, name='user_edit'),
+    path('user/<int:pk>/', ProfileView.as_view(), name="profile"),
     path('challenge_feedback/<int:challenge_id>/', views.get_admin_feedback, name='admin_feedback'),
 ]

@@ -3,13 +3,13 @@ from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 
 class Challenge(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)  # Link to the user who created the challenge
-    image = models.ImageField(upload_to='challenges/')        # Store the uploaded image
+    user = models.ForeignKey(User, on_delete=models.CASCADE)    # Link to the user who created the challenge
+    image = models.ImageField(upload_to='challenges/')          # Store the uploaded image
     longitude = models.FloatField()
-    latitude = models.FloatField()               # Store the answer coordinates
-    timestamp = models.DateTimeField(auto_now_add=True)        # Automatically set when the challenge is created
-    approve_status = models.BooleanField(default=False)        # whether or not challenge has been approved 
-    approval_feedback = models.TextField(default="")          # the feedback given by admin if challenge was denied
+    latitude = models.FloatField()                              # Store the answer coordinates
+    timestamp = models.DateTimeField(auto_now_add=True)         # Automatically set when the challenge is created
+    approve_status = models.BooleanField(default=False)         # whether or not challenge has been approved 
+    approval_feedback = models.TextField(default="")            # the feedback given by admin if challenge was denied
 
     def __str__(self):
         return f"Challenge {self.pk} by {self.user.username}"

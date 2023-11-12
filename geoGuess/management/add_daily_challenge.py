@@ -3,7 +3,7 @@ from geoGuess.models import DailyChallenge
 from geoGuess.cron import generate_daily_challenge  # Implement a function to select a random challenge
 
 """
-Created with a lot of help from GTP 3.5
+Created with help from GPT 3.5, of how to create a cron service to generate a daily challenge at a specific time every day.
 """
 class Command(BaseCommand):
     help = 'Generate daily challenge at 12:00 AM EST every day.'
