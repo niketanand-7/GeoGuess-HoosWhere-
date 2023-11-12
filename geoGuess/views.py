@@ -237,6 +237,11 @@ class ApproveSubmissionsView(LoginRequiredMixin, UserPassesTestMixin, generic.Li
     form_name = ApproveChallengeForm
     context_object_name = "challenge_list"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['maps_api_key'] = os.environ.get('GOOGLE_MAPS_API_KEY')
+        return context
+
     def get_queryset(self):
         return Challenge.objects.filter(Q(approve_status=False) & Q(approval_feedback=''))
 
