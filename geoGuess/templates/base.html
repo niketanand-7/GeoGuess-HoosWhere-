@@ -67,13 +67,16 @@
           <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
+                <a class="nav-link" href="{% url 'daily_challenge_list' %}">Daily Challenges</a>
+              </li>
+              <li class="nav-item">
                 <a class="nav-link" href="{% url 'challenge' %}">Create Challenge</a>
               </li>
                <li class="nav-item">
                 <a class="nav-link" href="{% url 'submissions' %}">View Submissions</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'leaderboard' %}">Leaderboards</a>
+                <a class="nav-link" href="{% url 'leaderboard' %}">Leaderboard</a>
               </li>
         {% endif %}
           </ul>

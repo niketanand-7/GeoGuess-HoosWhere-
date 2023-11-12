@@ -9,7 +9,7 @@ class ChallengeForm(forms.ModelForm):
 class GuessForm(forms.ModelForm):
     class Meta:
         model = Guess
-        fields = ['score']
+        fields = ['latitude', 'longitude']
         
 class ApproveChallengeForm(forms.ModelForm):
     class Meta:

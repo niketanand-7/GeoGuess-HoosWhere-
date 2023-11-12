@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<body>
+    <title>📅Daily Challenges</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'geoGuess.css' %}" type="text/css" />
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <ul>
+        {% for daily_challenge in daily_challenge_list %}
+        <li>
+            <a href="{% url 'daily_challenge' daily_challenge.id %}">{{ forloop.counter }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+{% endblock content %}

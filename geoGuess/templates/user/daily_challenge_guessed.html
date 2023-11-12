@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block content %}
+<body>
+    <!-- Google Maps CSS -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'geoGuess.css' %}" type="text/css"/>
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ maps_api_key }}&callback=initialize&v=weekly" defer></script>
+    <title>📅Daily Challenge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=0.5" />
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+
+    <div class="d-flex justify-content-between" id="guessMap">
+        <div class="flex-fill mr-2 text-center">  
+            <img src="{{ Challenge.image.url }}" id="image">
+        </div>
+        <div class="text-center" id="map" style="height: 500px; margin: 0 auto;"></div>
+        <br>
+    </div>
+    <div>
+        Your guess was {{ Guess.distanceFromAnswer }} meters away from the actual location.
+    </div>
+    <div>
+        Your guess was at {{ Guess.latitude }}, {{ Guess.longitude }}.
+    </div>
+    <div>
+        The correct answer was {{ Challenge.latitude }}, {{ Challenge.longitude }}.
+    </div>
+    <div>
+        You earned {{ Guess.score }} points for this guess.
+    </div>    
+    {% load static %}
+      <!-- Google Maps Initialization -->
+        <script>
+            var map;
+            var marker;
+            var form = document.getElementById("form")
+
+            function initialize() {
+                var mapOptions = {
+                    center: new google.maps.LatLng(38.03555, -78.50333),
+                    zoom: 15
+                };
+
+                map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+                google.maps.event.addListener(map, 'click', function (event) {
+                    placeMarker(event.latLng);
+                });
+            }
+
+            function placeMarker(location) {
+                if (marker) {  // if marker exists, remove it
+                    marker.setMap(null);
+                }
+                marker = new google.maps.Marker({
+                    position: location,
+                    map: map
+                });
+
+                // Update the hidden form fields with the clicked coordinates
+                document.getElementById('id_longitude').value = location.lng();
+                document.getElementById('id_latitude').value = location.lat();
+            }
+
+            // TO-DO: add error check if marker isn't placed
+            // This function will be called once the Google Maps script is loaded
+            initialize();
+        </script>
+</body>
+{% endblock content %}
