@@ -137,7 +137,6 @@ class DailyChallengeView(LoginRequiredMixin, generic.DetailView):
 
         print(self.get_template_names())
         if 'user/daily_challenge_guessed.html' in self.get_template_names():
-            print('here')
             context['Guess'] = Guess.objects.get(user=self.request.user, challenge=self.get_object().challenge)
         return context
 
