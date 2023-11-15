@@ -58,7 +58,7 @@
     <link rel="stylesheet" href="{% static 'geoGuess.css' %}" type="text/css" />
     
     <!-- Current Day's Challenge -->
-    {% with current_day_challenge=daily_challenge_list|first %}
+    {% with current_day_challenge=daily_challenge_list|dictsortreversed:"timestamp"|first %}
     <div class="challenge-tile large">
         <a href="{% url 'daily_challenge' current_day_challenge.id %}">
             <div class="challenge-image" style="background-image: url('{{ current_day_challenge.challenge.image.url }}');"></div>
@@ -70,7 +70,7 @@
     <!-- Previous Challenges -->
     <ul class="challenge-list">
         {% for daily_challenge in daily_challenge_list %}
-        {% if not forloop.first %} <!-- Skip the first one since it's already displayed above -->
+        {% if not forloop.last %} <!-- Skip the first one since it's already displayed above -->
         <li class="challenge-tile small">
             <a href="{% url 'daily_challenge' daily_challenge.id %}">
                 <div class="challenge-image" style="background-image: url('{{ daily_challenge.challenge.image.url }}');"></div>
