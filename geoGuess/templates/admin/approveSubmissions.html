@@ -1,7 +1,4 @@
 {% extends 'base.html' %}
-
-
-
 {% block content %}
 <title>Approve Submissions</title>
 
@@ -36,9 +33,10 @@
                             <div class="modal-body">
                                 Would you like to approve or deny the submission?
                                 <img src="{{Challenge.image.url}}" style="max-width: 100%; max-height: 100%; display: block; margin: 0 auto;">
-                                <div id="map_{{Challenge.id}}" class="text-center">
-                                    Longitude: {{Challenge.longitude|floatformat:5 }}
-                                    Latitude: {{Challenge.latitude|floatformat:5}}
+                                <div class="map-container" id="map_{{ Challenge.id }}" data-lat="{{ Challenge.latitude }}" data-lng="{{ Challenge.longitude }}" data-id="map_{{ Challenge.id }}" style="height: 400px; margin: 0 auto;"></div>
+                                <div class="">
+                                    Latitude: {{ Challenge.latitude|floatformat:5 }}
+                                    Longitude: {{ Challenge.longitude|floatformat:5 }}
                                 </div>
                                 <!-- <script>
                                     document.addEventListener("DOMContentLoaded", function () {
@@ -75,29 +73,27 @@
             </ul>
         </div>
     </div>
-</div>
+    <script>
+        function initMap() {
+            var mapContainers = document.querySelectorAll('.map-container');
 
-<!-- Google Maps Initialization -->
-<!-- <script>
-    function initializeMap(challengeId, latitude, longitude) {
-        function initialize() {
-            var map;
-            var marker;
+            mapContainers.forEach(function(container) {
+                var latitude = parseFloat(container.getAttribute('data-lat'));
+                var longitude = parseFloat(container.getAttribute('data-lng'));
+                var mapId = container.getAttribute('data-id');
 
-            var mapOptions = {
-                center: new google.maps.LatLng(-45.132456, 34.13),
-                zoom: 15,
-                scroll: null,
-            };
-
-            map = new google.maps.Map(document.getElementById("map_" + challengeId), mapOptions);
-
-            marker = new google.maps.Marker({
-                position: new google.maps.LatLng(latitude, longitude),
-                map: map
+                var mapOptions = {
+                center: { lat: latitude, lng: longitude },
+                zoom: 14
+                };
+                var map = new google.maps.Map(document.getElementById(mapId), mapOptions);
+                var marker = new google.maps.Marker({
+                    position: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
+                    map: map
+                });
             });
         }
-        initialize();
-    }
-</script> -->
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ maps_api_key }}&callback=initMap&v=weekly" async defer></script>
+</div>
 {% endblock content %}

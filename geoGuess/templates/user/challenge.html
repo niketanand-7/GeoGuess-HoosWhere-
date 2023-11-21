@@ -11,7 +11,6 @@
         defer></script>
 <body>
 <div class="text-center">
-    <div id="error-message" class="error-message" style="display: none;"></div>
     <h2 class="my-3"> Add a New Location to Be Featured in a Future Challenge</h2>
     <h4 class="my-3"> In the space below, upload an image at UVA, you would like to be featured in a future challenge
         :)</h4>
@@ -36,6 +35,7 @@
         <!-- Map Div -->
         <div class="text-center" id="map" style="height: 400px; margin: 0 auto;"></div>
         <br>
+        <div id="error-message" class="error-message" style="display: none;"></div>
         <input type="submit" value="Submit" class="my-3 text-white bg-primary"/>
     </form>
 </div>
@@ -46,12 +46,12 @@
     var form = document.getElementById("form")
 
     function initialize() {
-        var mapOptions = {
-            center: new google.maps.LatLng(0, 0),
-            zoom: 2
-        };
+        const defaultLocation = {lat: 38.0336, lng: -78.5080}; //can change locationvar mapOptions = {
 
-        map = new google.maps.Map(document.getElementById("map"), mapOptions);
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: defaultLocation,
+            zoom: 14
+        });
 
         google.maps.event.addListener(map, 'click', function (event) {
             placeMarker(event.latLng);
@@ -84,6 +84,7 @@
             // Display an error message
             errorMessage.innerText = 'Please place a marker on the map for the corresponding image!';
             errorMessage.style.display = 'block';
+            errorMessage.style.color = "red";
 
             // Prevent form submission
             event.preventDefault();

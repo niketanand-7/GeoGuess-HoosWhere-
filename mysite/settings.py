@@ -42,10 +42,17 @@ if not IS_HEROKU_APP:
     load_dotenv()
 
 if IS_HEROKU_APP:
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_BROWSER_XSS_FILTER = True
+    X_FRAME_OPTIONS = 'DENY'
+    SECURE_CONTENT_TYPE_NOSNIFF = True
     ALLOWED_HOSTS = ['*']
 else:
     ALLOWED_HOSTS = ['localhost','127.0.0.1']
-    
+
 # Application definition
 
 INSTALLED_APPS = [
