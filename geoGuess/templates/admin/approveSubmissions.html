@@ -23,7 +23,7 @@
                     </li>
 
                      <!-- Approve/Deny Modal -->
-                    <div class="modal fade" id="approvalModal_{{Challenge.id}}" tabindex="-1" aria-labelledby="approvalModalLabel" aria-hidden="true">
+                    <div class="modal fade modal-lg" id="approvalModal_{{Challenge.id}}" tabindex="-1" aria-labelledby="approvalModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -32,21 +32,10 @@
                             </div>
                             <div class="modal-body">
                                 Would you like to approve or deny the submission?
-                                <img src="{{Challenge.image.url}}" style="max-width: 100%; max-height: 100%; display: block; margin: 0 auto;">
-                                <div class="map-container" id="map_{{ Challenge.id }}" data-lat="{{ Challenge.latitude }}" data-lng="{{ Challenge.longitude }}" data-id="map_{{ Challenge.id }}" style="height: 400px; margin: 0 auto;"></div>
-                                <div class="">
-                                    Latitude: {{ Challenge.latitude|floatformat:5 }}
-                                    Longitude: {{ Challenge.longitude|floatformat:5 }}
+                                <div class="container px-4 text-center">
+                                    <img src="{{Challenge.image.url}}" style="max-width: 100%; max-height: 100%; display: block; margin: 0 auto;">
+                                    <div class="map-container" id="map_{{ Challenge.id }}" data-lat="{{ Challenge.latitude }}" data-lng="{{ Challenge.longitude }}" data-id="map_{{ Challenge.id }}" style="height: 400px; margin: 0 auto;"></div>
                                 </div>
-                                <!-- <script>
-                                    document.addEventListener("DOMContentLoaded", function () {
-                                        initializeMap(
-                                            "{{ Challenge.id }}",
-                                            "{{ Challenge.latitude }}",
-                                            "{{ Challenge.longitude }}"
-                                        );
-                                    });
-                                </script> -->
                             </div>
                             <div class="modal-footer">
                                 <form method="post" action="{% url 'admin_feedback' challenge_id=Challenge.id %}" style="width: 100%;">
