@@ -31,13 +31,24 @@
         <h1 class="text-center">Control Users</h1>
         <ul class="list-group mt-4" style="max-width: 600px">
           {% for user in user_list%}
+          <form method="post" action="{% url 'user_edit' user_id=user.id %}">
+            {% csrf_token %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
-              {{user}}
-              <div>
-                <button type="button" class="btn btn-warning btn-sm mx-2" data-bs-toggle="modal" data-bs-target="#editModal_{{user.id}}">See Auth</button>
-                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal_{{user.id}}">Remove</button>
-              </div> 
+              
+                <div class="d-flex align-items-center">
+                  <b>{{user}}</b>
+                  <div class="form-check form-switch mx-3" style="margin-bottom: 0;">
+                    <label class="form-check-label" for="flexSwitchCheckDefault">Admin</label>
+                    <input id="admin" name="admin" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" {% if user.is_superuser %}checked{% endif %}>
+                  </div> 
+                </div>
+                <div class="justify-content-end d-flex align-items-center">
+                  <button type="submit" name="editAuth" class="btn btn-primary btn-sm" >Save Auth</button>
+                  <button type="button" class="btn btn-danger btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{user.id}}">Remove</button>
+                </div>
             </li>
+          </form>
+
             <!-- DELETE Modal -->
             <div class="modal fade" id="deleteModal_{{user.id}}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
               <div class="modal-dialog">
@@ -59,24 +70,13 @@
                 </div>
               </div>
             </div>
-              <!-- EDIT MODAL -->
-            <div class="modal fade" id="editModal_{{user.id}}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">User Auth Level</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    '{{user}}' has auth level of {% if user.is_superuser %}admin {% else %} regular user{% endif %}. Their auth level can be edited at the django amin page.
-                  </div>
-                </div>
-              </div>
-            </div>
+
           {% endfor %}
         </ul>
       </div>
     </div>
+
+    
     {% endif %} 
     {% endblock %}
   </body>

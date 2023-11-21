@@ -15,4 +15,7 @@ class ApproveChallengeForm(forms.ModelForm):
     class Meta:
         model = Challenge
         fields = ['approve_status', 'approval_feedback']
+
+class UserAuthForm(forms.Form):
+    admin = forms.BooleanField(label="admin")
     

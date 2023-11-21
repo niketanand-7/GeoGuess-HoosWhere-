@@ -8,7 +8,7 @@ from .models import Challenge, Guess, DailyChallenge
 from django.views import generic
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import ChallengeForm, GuessForm, ApproveChallengeForm
+from .forms import ChallengeForm, GuessForm, ApproveChallengeForm, UserAuthForm
 import os, math, googlemaps
 from geopy.distance import geodesic
 
@@ -233,7 +233,15 @@ class AdminUsersView(LoginRequiredMixin, UserPassesTestMixin, generic.ListView):
 def edit_user(request, user_id):
     user = get_object_or_404(User, pk=user_id)
 
-    if 'editUser' in request.POST:
+    if 'editAuth' in request.POST:
+        checkbox = request.POST.get('admin')
+        if checkbox == "on":
+            admin = True
+        else:
+            admin = False
+
+        user.is_superuser = admin
+        user.is_staff = admin
         user.save()
 
     if 'deleteUser' in request.POST:
