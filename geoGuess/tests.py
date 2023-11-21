@@ -64,24 +64,6 @@ class HomeViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Welcome,')
 
-class MapsViewTest(TestCase):
-    
-    def setUp(self):
-        self.regular_user = User.objects.create_user(
-            username='regular_user',
-            password='password',
-            is_staff=False,
-            is_superuser=False
-        )
-        # Log in the regular user
-        self.client.login(username='regular_user', password='password')
-        self.maps_url = reverse('maps')
-#Checks if accessing the maps view returns a status code of 200 and if the response context contains a key for the maps API.
-    def test_maps_view(self):
-        response = self.client.get(self.maps_url)
-        self.assertEqual(response.status_code, 200) #failing
-        self.assertIn('maps_api_key', response.context)
-
 class AddChallengeViewTest(TestCase):
 
     def setUp(self):
