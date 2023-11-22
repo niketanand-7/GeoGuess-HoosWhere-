@@ -1,9 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <body>
-    <!-- Google Maps CSS -->
     {% load static %}
-    <link rel="stylesheet" href="{% static 'geoGuess.css' %}" type="text/css"/>
     <!-- Google Maps API -->
     <script src="https://maps.googleapis.com/maps/api/js?key={{ maps_api_key }}&callback=initialize&v=weekly" defer></script>
     <title>📅Daily Challenge</title>
@@ -16,14 +14,22 @@
         <!-- Hidden Longitude and Latitude Fields (filled by the map click) -->
         <input type="hidden" name="longitude" id="id_longitude" required>
         <input type="hidden" name="latitude" id="id_latitude" required>
-        <div class="d-flex justify-content-between" id="guessMap">
-            <div class="flex-fill mr-2 text-center">  
-                <img src="{{ Challenge.image.url }}" id="image">
+        <div class="container text-center">
+            <div class="pb-2">
+                <h1> {{Challenge.timestamp|date:"F d, Y"}} </h1>
+                <h5> Challenge by {{Challenge.user}}</h5>   
+            </div>   
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="{{Challenge.image.url}}" class="img-fluid" style="width: 100%; max-height: 350px; display: block; margin: 0 auto; border-radius: 5%; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);">
+                </div>
+                <div class="col-md-6">
+                    <div class="">
+                        <div class="text-center" id="map" style="height: 350px; border-radius: 5%; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);"></div>
+                    </div>
+                </div>
             </div>
-            <div class="text-center" id="map" style="height: 500px; margin: 0 auto;"></div>
-            <br>
         </div>
-
         <button type="submit" value="Submit" id="guessButton" class="btn btn-primary mt-3 mx-auto d-block">Make a Guess</button>
     </form>
     {% load static %}
