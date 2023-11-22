@@ -2,11 +2,9 @@
 {% block content %}
 <title>Approve Submissions</title>
 
-<!-- {% load static %}
-<link rel="stylesheet" href="{% static 'geoGuess.css' %}" type="text/css"/>
+<style>
 
-<script src="https://maps.googleapis.com/maps/api/js?key={{ maps_api_key }}&callback=initialize&v=weekly"
-        defer></script> -->
+</style>
 
 <div class="container p-5 d-flex align-items-center justify-content-center">
     <div style="width: 500px">
@@ -23,18 +21,26 @@
                     </li>
 
                      <!-- Approve/Deny Modal -->
-                    <div class="modal fade modal-lg" id="approvalModal_{{Challenge.id}}" tabindex="-1" aria-labelledby="approvalModalLabel" aria-hidden="true">
+                    <div class="modal fade modal-xl" id="approvalModal_{{Challenge.id}}" tabindex="-1" aria-labelledby="approvalModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="approvalModalLabel">Approve Submission</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <h1 class="modal-title fs-5" id="approvalModalLabel">Approve Submission</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
                                 Would you like to approve or deny the submission?
-                                <div class="container px-4 text-center">
-                                    <img src="{{Challenge.image.url}}" style="max-width: 100%; max-height: 100%; display: block; margin: 0 auto;">
-                                    <div class="map-container" id="map_{{ Challenge.id }}" data-lat="{{ Challenge.latitude }}" data-lng="{{ Challenge.longitude }}" data-id="map_{{ Challenge.id }}" style="height: 400px; margin: 0 auto;"></div>
+                                <div class="container p-3 text-center">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <img src="{{Challenge.image.url}}" class="img-fluid" style="width: 100%; max-height: 350px; display: block; margin: 0 auto; border-radius: 5%; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="">
+                                                <div class="map-container" id="map_{{ Challenge.id }}" data-lat="{{ Challenge.latitude }}" data-lng="{{ Challenge.longitude }}" data-id="map_{{ Challenge.id }}" style="height: 350px; border-radius: 5%; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);"></div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
