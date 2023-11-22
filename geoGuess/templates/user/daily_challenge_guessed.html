@@ -69,13 +69,13 @@
                     position: new google.maps.LatLng(guess_latitude,guess_longitude),
                     map: map
                 });
-
-                var answer_latitude = {{ Guess.challenge.latitude }};
-                var answer_longitude = {{ Guess.challenge.longitude }};
-                const marker = new AdvancedMarkerElement({
-                    map,
-                    position: { lat: answer_latitude, lng: answer_longitude },
-                });
+                // TODO: make different color marker for answer
+                // var answer_latitude = {{ Guess.challenge.latitude }};
+                // var answer_longitude = {{ Guess.challenge.longitude }};
+                // const marker = new AdvancedMarkerElement({
+                //     map,
+                //     position: { lat: answer_latitude, lng: answer_longitude },
+                // });
 
             }
 

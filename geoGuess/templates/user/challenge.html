@@ -11,12 +11,10 @@
         defer></script>
 <body>
 <div class="text-center">
-    <h2 class="my-3"> Add a New Location to Be Featured in a Future Challenge</h2>
-    <h4 class="my-3"> In the space below, upload an image at UVA, you would like to be featured in a future challenge
-        :)</h4>
-    <h4 class="my-3"> Then, click below where the location is on the map </h4>
-    <h4 class="my-3"> Once, you hit submit, you should be able to go to the "View Submissions" and see if your
-        submission gets approved </h4>
+    <h2> Add a New Location to Be Featured in a Future Challenge</h2>
+    <h6 class="mx-5"> In the space below, upload an image at UVA, you would like to be featured in a future challenge
+        :)  Then, click below where the location is on the map. Once, you hit submit, you should be able to go to the "View Submissions" and see if your
+        submission gets approved. </h6>
 </div>
 <div class ="text-center">
     <form id="form" method="post" enctype="multipart/form-data">
@@ -24,19 +22,19 @@
         {{ form.formset.errors }}
         {{ form.non_field.errors }}
         <!-- Image Upload Field -->
-        <label class="my-3"for="id_image">Image:</label>
-        <input type="file" name="image" id="id_image" required>
+        <div class="input-group mt-3 mx-auto" style="width: 25%;">
+            <input type="file" name="image" id="id_image" class="form-control" id="inputGroupFile02" required>
+        </div>
         <br>
-
         <!-- Hidden Longitude and Latitude Fields (filled by the map click) -->
         <input type="hidden" name="longitude" id="id_longitude">
         <input type="hidden" name="latitude" id="id_latitude">
 
         <!-- Map Div -->
-        <div class="text-center" id="map" style="height: 400px; margin: 0 auto;"></div>
+        <div class="text-center" id="map" style="height: 300px; margin: 0 auto;"></div>
         <br>
-        <div id="error-message" class="error-message" style="display: none;"></div>
-        <input type="submit" value="Submit" class="my-3 text-white bg-primary"/>
+        <div id="error-message" class="error-message mb-3" style="display: none;"></div>
+        <button class="btn btn-primary mb-4" type="submit" value="Submit" class="my-3 text-white bg-primary">Submit</button>
     </form>
 </div>
 <!-- Google Maps Initialization -->
