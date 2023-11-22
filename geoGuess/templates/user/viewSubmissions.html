@@ -3,11 +3,11 @@
 <title>View Submissions</title>
 <div class="container p-5 d-flex align-items-center justify-content-center">
       <div style="width: 500px">
-        <h1 class="text-center">View My Submissions</h1>
+        <h1 class="text-center">Your Submissions</h1>
         <ul class="list-group mt-4" style="max-width: 600px">
           {% for Challenge in challenges %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
-              <img src="{{ Challenge.image.url }}" style="margin: 0 auto; height:75%; width: 35%">
+              <img src="{{ Challenge.image.url }}" style="height:100%; max-width: 35%; border-radius: 5%;">
               {% if Challenge.approve_status %}
                 <div class="btn btn-success btn-sm" style="pointer-events: none;"> Approved </div>
               {% else %}

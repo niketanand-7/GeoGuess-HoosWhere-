@@ -13,8 +13,8 @@
             <ul class="list-group mt-4" style="max-width: 600px">
                 {% for Challenge in challenge_list %}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <img src="{{ Challenge.image.url }}" style="margin: 0 auto; height:75%; width: 35%">
-                        <div class="mx-2">
+                        <img src="{{ Challenge.image.url }}" style="height:100%; max-width: 35%; border-radius: 5%;">
+                        <div>
                             Submitted by {{ Challenge.user }}
                         </div>
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#approvalModal_{{Challenge.id}}"> See More </button>
