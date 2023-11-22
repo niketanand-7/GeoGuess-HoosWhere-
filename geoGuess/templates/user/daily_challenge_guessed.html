@@ -55,8 +55,6 @@
             function initialize() {
                 var guess_latitude = {{ Guess.latitude }};
                 var guess_longitude = {{ Guess.longitude }};
-                const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
-
 
                 var mapOptions = {
                     center: new google.maps.LatLng(guess_latitude, guess_longitude),
