@@ -44,33 +44,39 @@
         </div>
     </div>
     
-    <!-- <div>
-        Your guess was {{ Guess.distanceFromAnswer }} meters away from the actual location.
-    </div>
-    <div>
-        You earned {{ Guess.score }} points for this guess.
-    </div>     -->
     {% load static %}
       <!-- Google Maps Initialization -->
         <script>
             var map;
-            var marker;
-            var form = document.getElementById("form")
+            var guess_marker;
+            var answer_marker;
+            var form = document.getElementById("form");
 
             function initialize() {
+                var guess_latitude = {{ Guess.latitude }};
+                var guess_longitude = {{ Guess.longitude }};
+                const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+
+
                 var mapOptions = {
-                    center: new google.maps.LatLng(38.03555, -78.50333),
+                    center: new google.maps.LatLng(guess_latitude, guess_longitude),
                     zoom: 15
                 };
 
                 map = new google.maps.Map(document.getElementById("map"), mapOptions);
-                var latitude = {{ Guess.latitude }};
-                var longitude = {{ Guess.longitude }};
-                marker = new google.maps.Marker({
+                guess_marker = new google.maps.Marker({
                     visible: true,
-                    position: new google.maps.LatLng(latitude,longitude),
+                    position: new google.maps.LatLng(guess_latitude,guess_longitude),
                     map: map
                 });
+
+                var answer_latitude = {{ Guess.challenge.latitude }};
+                var answer_longitude = {{ Guess.challenge.longitude }};
+                const marker = new AdvancedMarkerElement({
+                    map,
+                    position: { lat: answer_latitude, lng: answer_longitude },
+                });
+
             }
 
             initialize();
