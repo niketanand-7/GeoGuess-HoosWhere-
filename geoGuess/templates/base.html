@@ -55,6 +55,9 @@
               <li class="nav-item {% is_active 'admin_users' %}">
                 <a class="nav-link" href="{% url 'admin_users' %}">See Users</a>
               </li>
+              <li class="nav-item {% is_active 'challenge_bank' %}">
+                <a class="nav-link" href="{% url 'challenge_bank' %}">See Challenge Bank</a>
+              </li>
       {% else %}
       <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">

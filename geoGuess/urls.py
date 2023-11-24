@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 from django.contrib.auth.views import LogoutView
 
 from .import views
-from .views import Home, AdminUsersView, AddChallengeView 
+from .views import Home, AdminUsersView, AddChallengeView, ChallengeBankView
 from .views import ViewSubmissions, ApproveSubmissionsView, LeaderboardView, DailyChallengeView, DailyChallengeListView, ProfileView
 
 
@@ -21,6 +21,7 @@ urlpatterns = [
     path('approve_submissions/', ApproveSubmissionsView.as_view(), name="approve_submissions"),
     path('challenge_form/', AddChallengeView.as_view(), name="challenge"),
     path('leaderboard/', LeaderboardView.as_view(), name="leaderboard"),
+    path('challenge_bank/', ChallengeBankView.as_view(), name="challenge_bank"),
 
     path('edit_user/<int:user_id>/', views.edit_user, name='user_edit'),
     path('user/<int:pk>/', ProfileView.as_view(), name="profile"),

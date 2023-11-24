@@ -286,4 +286,25 @@ def get_admin_feedback(request, challenge_id):
     return HttpResponseRedirect(reverse('approve_submissions'))
 
 
+class ChallengeBankView(LoginRequiredMixin, UserPassesTestMixin, generic.ListView):
+    template_name = "admin/challengeBank.html"
+    context_object_name = "challenge_list"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['Count'] = self.get_queryset().count
+        return context
+
+    def get_queryset(self):
+        challenge_list = Challenge.objects.filter(approve_status=True)
+        daily_challenge_list = DailyChallenge.objects.all()
+        for daily_challenge in daily_challenge_list:
+            challenge_list = challenge_list.exclude(id=daily_challenge.challenge.id)
+        return challenge_list
+
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.is_staff
+
+
+
  
