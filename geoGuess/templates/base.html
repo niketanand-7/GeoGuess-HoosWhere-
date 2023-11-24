@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load nav_bar %}
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -22,6 +23,11 @@
       body {
         background-color: #f4f4f8; /* light grayish background */
       }
+
+      .navbar-nav .nav-item.active a {
+            color: #000000; /* White text color for better visibility */
+            font-weight: bold; /* Bold text */
+      }
     </style>
   </head>
   <body>
@@ -43,10 +49,10 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
+              <li class="nav-item {% is_active 'approve_submissions' %}">
                 <a class="nav-link" href="{% url 'approve_submissions' %}">Approve Submissions</a>
               </li>
-              <li class="nav-item">
+              <li class="nav-item {% is_active 'admin_users' %}">
                 <a class="nav-link" href="{% url 'admin_users' %}">See Users</a>
               </li>
       {% else %}
@@ -66,16 +72,16 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
+              <li class="nav-item {% is_active 'daily_challenge_list' %}">
                 <a class="nav-link" href="{% url 'daily_challenge_list' %}">Daily Challenges</a>
               </li>
-              <li class="nav-item">
+              <li class="nav-item {% is_active 'challenge' %}">
                 <a class="nav-link" href="{% url 'challenge' %}">Create Challenge</a>
               </li>
-               <li class="nav-item">
+               <li class="nav-item {% is_active 'submissions' %}">
                 <a class="nav-link" href="{% url 'submissions' %}">View Submissions</a>
               </li>
-              <li class="nav-item">
+              <li class="nav-item {% is_active 'leaderboard' %}">
                 <a class="nav-link" href="{% url 'leaderboard' %}">Leaderboard</a>
               </li>
         {% endif %}
