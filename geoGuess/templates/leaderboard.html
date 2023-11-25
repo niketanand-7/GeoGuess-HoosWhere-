@@ -1,4 +1,11 @@
 {% extends 'base.html' %}
+{% block head %}
+<style>
+    .gold { background-color: gold; }
+    .silver { background-color: silver; }
+    .bronze { background-color: #cd7f32; }
+  </style>
+  {% endblock head %}
 {% block content %}
 <title>Leaderboard</title>
 <div class="container p-5 d-flex align-items-center justify-content-center">
@@ -16,7 +23,7 @@
             </thead>
             <tbody>
                 {% for player in leaderboard %}
-                <tr>
+                <tr class="{% if forloop.counter == 1 %}gold{% elif forloop.counter == 2 %}silver{% elif forloop.counter == 3 %}bronze{% endif %}">
                     <th scope="row">{{ forloop.counter }}</th>
                     <td><a href="{% url 'profile' player.id %}">{{ player.name }}</a></td>
                     <td>{{ player.average_score }}</td>
