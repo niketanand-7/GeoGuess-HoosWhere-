@@ -74,16 +74,29 @@ def get_player_stats(user):
         average_score = sum([guess.score for guess in guess_list]) / games_played
 
     return {"games_played": games_played, "average_score": average_score, "rating": rating_calc(average_score, games_played)}
-
+def get_user_leaderboard_position(user):
+    leaderboard = get_leaderboard()
+    for index, entry in enumerate(leaderboard, start = 1):
+        if entry['id'] == user.id:
+            return index
+    return None
 def get_recent_guesses(user):
     guess_list = Guess.objects.filter(user=user)
     return guess_list.order_by('-id')[:5]
 
-# Create your views here.
+#Home View
 class Home(generic.TemplateView):
     template_name = "home.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+            player_stats = get_player_stats(self.request.user)
+            context['player_stats'] = get_player_stats(self.request.user)
+            context['leaderboard_position'] = get_user_leaderboard_position(self.request.user)
+        return context
 
-# View to add a challenge
+
 class AddChallengeView(LoginRequiredMixin, generic.CreateView):
     template_name = 'user/challenge.html'
     login_url = '/'
@@ -304,7 +317,3 @@ class ChallengeBankView(LoginRequiredMixin, UserPassesTestMixin, generic.ListVie
 
     def test_func(self):
         return self.request.user.is_authenticated and self.request.user.is_staff
-
-
-
- 
