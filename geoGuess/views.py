@@ -162,7 +162,6 @@ class DailyChallengeView(LoginRequiredMixin, generic.DetailView):
             {
                 'Challenge': challenge,
                 'maps_api_key': os.environ.get('GOOGLE_MAPS_API_KEY'),
-                'error_message': 'Must select part of the map'
             }
         )
 

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <title>View Submissions</title>
-<div class="container p-5 d-flex align-items-center justify-content-center">
+<div class="container p-5 pt-0 d-flex align-items-center justify-content-center">
       <div style="width: 500px">
         <h1 class="text-center">Your Submissions</h1>
         <ul class="list-group mt-4" style="max-width: 600px">
@@ -14,7 +14,9 @@
                 {% if Challenge.approval_feedback == '' %}
                   <div class="btn btn-warning btn-sm" style="pointer-events: none;"> Waiting for Approval</div>
                 {% else %}
-                  <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="popover" data-bs-title="Denial Feedback" data-bs-content="{{Challenge.approval_feedback}}">Denied</button>
+                  <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="{{Challenge.approval_feedback}}">
+                    <button class="btn btn-danger btn-sm" type="button" >Denied</button>
+                  </span>
                 {% endif %}
               {% endif %}
             </li>
