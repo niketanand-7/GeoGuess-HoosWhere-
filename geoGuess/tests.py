@@ -99,6 +99,26 @@ class AdminAuthTest(TestCase):
         response = self.client.get(self.choice_url)
         self.assertContains(response, self.admin_user.username) #checks that the usernames are displayed for admin user with higher auth level
 
+    def test_admin_not_see_daily_challenge(self):
+        self.choice_url = reverse('daily_challenge_list')
+        response = self.client.get(self.choice_url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_admin_not_see_challenge_submission(self):
+        self.choice_url = reverse('challenge')
+        response = self.client.get(self.choice_url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_admin_not_see_leaderboard(self):
+        self.choice_url = reverse('leaderboard')
+        response = self.client.get(self.choice_url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_admin_not_see_submissions(self):
+        self.choice_url = reverse('submissions')
+        response = self.client.get(self.choice_url)
+        self.assertEqual(response.status_code, 403)
+
     
 class RegularUserAuthTest(TestCase):
 
