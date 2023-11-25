@@ -111,12 +111,22 @@ class RegularUserAuthTest(TestCase):
         )
         # Log in the regular user
         self.client.login(username='regular_user', password='password')
-        self.choice_url = reverse('admin_users')
 
     def test_regular_not_see_users_view(self):
+        self.choice_url = reverse('admin_users')
         response = self.client.get(self.choice_url)
         self.assertEqual(response.status_code, 403) #checks that regular user access this admin exclusive page
         #should not have permission to access page
+    
+    def test_regular_not_see_approve_submissions(self):
+        self.choice_url = reverse('approve_submissions')
+        response = self.client.get(self.choice_url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_regular_not_see_challenge_bank(self):
+        self.choice_url = reverse('approve_submissions')
+        response = self.client.get(self.choice_url)
+        self.assertEqual(response.status_code, 403)
 
 class ChallengeModelTest(TestCase):
     def setUp(self):

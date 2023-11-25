@@ -19,6 +19,7 @@
       integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
       crossorigin="anonymous"
     ></script>
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
@@ -29,6 +30,8 @@
     <div class="container p-5 d-flex align-items-center justify-content-center">
       <div style="width: 500px">
         <h1 class="text-center">Control Users</h1>
+        <div id="liveAlertPlaceholder"></div>
+
         <ul class="list-group mt-4" style="max-width: 600px">
           {% for user in user_list%}
           <form method="post" action="{% url 'user_edit' user_id=user.id %}">
@@ -38,12 +41,12 @@
                 <div class="d-flex align-items-center">
                   <b>{{user}}</b>
                   <div class="form-check form-switch mx-3" style="margin-bottom: 0;">
-                    <label class="form-check-label" for="flexSwitchCheckDefault">Admin</label>
+                    <label class="form-check-label" for="admin">Admin</label>
                     <input id="admin" name="admin" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" {% if user.is_superuser %}checked{% endif %}>
                   </div> 
                 </div>
                 <div class="justify-content-end d-flex align-items-center">
-                  <button type="submit" name="editAuth" class="btn btn-primary btn-sm" >Save Auth</button>
+                  <button type="submit" name="editAuth" class="btn btn-primary btn-sm">Save Auth</button>
                   <button type="button" class="btn btn-danger btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{user.id}}">Remove</button>
                 </div>
             </li>
