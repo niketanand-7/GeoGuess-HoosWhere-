@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load socialaccount %}
 
 {% block content %}
 <style>
-  /* Custom styles */
   .card {
     border-radius: 20px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
@@ -15,12 +15,23 @@
     width: 80px;
     height: 80px;
     display: block;
-    margin: 20px auto 20px; /* increased top margin */
+    margin: 20px auto 20px;
   }
 
   .btn-secondary {
-    background-color: #4285F4; /* Google button blue */
+    background-color: #4285F4;
     color: white;
+  }
+
+  
+  .app-logo {
+    width: 150px;
+    margin: 0 auto 20px; 
+    display: block; 
+  }
+
+  .centered-container {
+    text-align: center;
   }
 </style>
 
@@ -28,9 +39,10 @@
     <div class="row justify-content-center">
       <div class="col-md-6">
         <div class="card p-5">
-          <div class="text-center">
-            <h2>HoosWhere? App</h2>
-            
+          <div class="centered-container">
+           
+            <img src="{% static 'Game Logo.png' %}" alt="HoosWhere Logo" class="app-logo">
+            <h2>HoosWhere?</h2>
             {% if user.is_authenticated %}
               <img class="user-icon user-icon-home"
                   src="{{ user.socialaccount_set.all.0.get_avatar_url }}"
@@ -42,15 +54,13 @@
                 Logout
               </a>
             {% else %}
-              <!-- Google button starts here -->
               <a href="{% provider_login_url 'google' %}" class="btn btn-secondary mt-3">
                 <i class="fa fa-google fa-fw"></i> Login with Google
               </a>
-              <!-- Google button ends here -->
             {% endif %}
           </div>
         </div>
       </div>
     </div>
   </div>
-  {% endblock content %}
+{% endblock content %}
