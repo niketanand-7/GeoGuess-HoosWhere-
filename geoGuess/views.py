@@ -84,7 +84,7 @@ class Home(generic.TemplateView):
     template_name = "home.html"
 
 # View to add a challenge
-class AddChallengeView(LoginRequiredMixin, generic.CreateView):
+class AddChallengeView(LoginRequiredMixin, UserPassesTestMixin, generic.CreateView):
     template_name = 'user/challenge.html'
     login_url = '/'
 
@@ -114,17 +114,23 @@ class AddChallengeView(LoginRequiredMixin, generic.CreateView):
             self.get_context_data()
         )
     
+    def test_func(self):
+        return self.request.user.is_authenticated and not self.request.user.is_staff
+    
 # View to see past challenges and current challenge
-class DailyChallengeListView(LoginRequiredMixin, generic.ListView):
+class DailyChallengeListView(LoginRequiredMixin, UserPassesTestMixin, generic.ListView):
     template_name = "user/daily_challenge_list.html"
     login_url = '/'
     context_object_name = "daily_challenge_list"
 
     def get_queryset(self):
         return DailyChallenge.objects.filter(challenge__approve_status=True)
+    
+    def test_func(self):
+        return self.request.user.is_authenticated and not self.request.user.is_staff
 
 # View to see a specific daily challenge
-class DailyChallengeView(LoginRequiredMixin, generic.DetailView):
+class DailyChallengeView(LoginRequiredMixin, UserPassesTestMixin, generic.DetailView):
     template_name = "user/daily_challenge.html"
     login_url = '/'
     model = DailyChallenge
@@ -170,6 +176,9 @@ class DailyChallengeView(LoginRequiredMixin, generic.DetailView):
             return ["user/daily_challenge_guessed.html"]
         
         return ["user/daily_challenge.html"]
+    
+    def test_func(self):
+        return self.request.user.is_authenticated and not self.request.user.is_staff
 
 # class MapsView(LoginRequiredMixin, TemplateView):
 #     template_name = 'user/maps.html'
@@ -182,7 +191,7 @@ class DailyChallengeView(LoginRequiredMixin, generic.DetailView):
 #         context['Challenge'] = Challenge.objects.filter(approve_status=True).first() #sets the information for the challenge being used
 #         return context    
 
-class ViewSubmissions(LoginRequiredMixin, generic.ListView):
+class ViewSubmissions(LoginRequiredMixin, UserPassesTestMixin, generic.ListView):
     template_name = "user/viewSubmissions.html"
     login_url = '/'
 
@@ -191,15 +200,21 @@ class ViewSubmissions(LoginRequiredMixin, generic.ListView):
     # get all google registered users
     def get_queryset(self):
         return Challenge.objects.filter(user=self.request.user)
+    
+    def test_func(self):
+        return self.request.user.is_authenticated and not self.request.user.is_staff
 
-class LeaderboardView(LoginRequiredMixin, generic.ListView):
+class LeaderboardView(LoginRequiredMixin, UserPassesTestMixin, generic.ListView):
     template_name = "leaderboard.html"
     context_object_name = "leaderboard"
     
     def get_queryset(self):
         return get_leaderboard()
+    
+    def test_func(self):
+        return self.request.user.is_authenticated and not self.request.user.is_staff
 
-class ProfileView(generic.DetailView):
+class ProfileView(generic.DetailView, UserPassesTestMixin):
     template_name = "user/profile.html"
     context_object_name = "user"
 
@@ -211,6 +226,9 @@ class ProfileView(generic.DetailView):
         context['stats'] = get_player_stats(self.get_object())
         context['recent_guesses'] = get_recent_guesses(self.get_object())
         return context
+    
+    def test_func(self):
+        return self.request.user.is_authenticated and not self.request.user.is_staff
 
 ##########################################################################3
 #Admin Views
