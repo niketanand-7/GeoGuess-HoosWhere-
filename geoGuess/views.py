@@ -263,8 +263,11 @@ def edit_user(request, user_id):
 
     if 'deleteUser' in request.POST:
         user.delete()
-        
-    return HttpResponseRedirect(reverse('admin_users'))
+
+    if request.user == user:
+        return HttpResponseRedirect(reverse('home'))
+    else:
+        return HttpResponseRedirect(reverse('admin_users'))
         
 class ApproveSubmissionsView(LoginRequiredMixin, UserPassesTestMixin, generic.ListView):
     template_name = "admin/approveSubmissions.html"

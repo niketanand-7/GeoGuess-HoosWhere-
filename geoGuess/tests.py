@@ -13,6 +13,9 @@ from .models import Challenge, Guess
 from .forms import ChallengeForm, ApproveChallengeForm
 from .cron import generate_daily_challenge
 from django.db import transaction, IntegrityError
+from .views import LeaderboardView, ChallengeBankView
+from io import StringIO
+from django.core.management import call_command
 import os
 
 
@@ -348,12 +351,120 @@ class GuessRelationTestCase(TestCase):
 
 class LeaderBoardTests(TestCase):
     def setUp(self):
-        self.factory = RequestFactory
         self.user = User.objects.create_user(
             username="test", email="test@gmail.com", password="pass"
         )
-        #test needs at least one daily challenge in the system!!
-        #request = self.factory.get("/daily_challenge/3/")
+        self.challenge = Challenge.objects.create(
+            user=self.user,
+            image='path/to/image.jpg',
+            longitude=123.45,
+            latitude=67.89,
+            approve_status=True
+        )
+        self.guess = Guess.objects.create(
+            user=self.user,
+            challenge=self.challenge,
+            score=200,
+        )
+        request = RequestFactory().get('/leaderboard')
+        self.view = LeaderboardView()
+        self.view.setup(request)
+
+    def test_user_on_leaderboard(self):
+        leaderboard = self.view.get_queryset()
+        self.assertEqual(1, len(leaderboard))
+
+    def test_leaderboard_with_no_guesses(self):
+        self.guess.delete()
+        leaderboard = self.view.get_queryset()
+        self.assertEqual(0,len(leaderboard))
+
+    def test_leaderboard_with_two_guesses_with_new_guess_with_higher_score(self):
+        new_user = User.objects.create_user('testuser2', 'test2@example.com', 'password123')
+        new_guess = Guess.objects.create(
+            user=new_user,
+            challenge=self.challenge,
+            score= 500,
+        )
+        leaderboard = self.view.get_queryset()
+        self.assertEqual(2,len(leaderboard))
+        self.assertEqual(new_guess.score,leaderboard[0]["average_score"]) #checks to make sure leaderboard order is correct
+        self.assertEqual(self.guess.score,leaderboard[1]["average_score"])
+
+    def test_leaderboard_with_two_guesses_with_new_guess_with_lower_score(self):
+        new_user = User.objects.create_user('testuser2', 'test2@example.com', 'password123')
+        new_guess = Guess.objects.create(
+            user=new_user,
+            challenge=self.challenge,
+            score= 100,
+        )
+        leaderboard = self.view.get_queryset()
+        self.assertEqual(2,len(leaderboard))
+        self.assertEqual(new_guess.score,leaderboard[1]["average_score"]) #checks to make sure leaderboard order is correct
+        self.assertEqual(self.guess.score,leaderboard[0]["average_score"])
+
+class AddingDailyChallengeTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user('testuser', 'test@example.com', 'password123')
+        self.challenge = Challenge.objects.create(
+            user=self.user,
+            image='path/to/image.jpg',
+            longitude=123.45,
+            latitude=67.89,
+            approve_status=True
+        )
+
+    def test_add_daily_challenge_success(self):
+        out = StringIO()
+        call_command('add_daily_challenge', stdout=out)
+        self.assertIn('Daily challenge added successfully.',out.getvalue())
+
+    def test_add_daily_challenge_fail(self):
+        self.challenge.delete()
+        out = StringIO()
+        call_command('add_daily_challenge', stdout=out)
+        self.assertIn('No challenges to add.', out.getvalue())
+
+class ChallengeBankTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='admin_user',
+            password='password',
+            is_staff=True,
+            is_superuser=True
+        )
+        self.challenge = Challenge.objects.create(
+            user=self.user,
+            image='path/to/image.jpg',
+            longitude=123.45,
+            latitude=67.89,
+            approve_status=True
+        )
+        request = RequestFactory().get('/challenge_bank')
+        self.view = ChallengeBankView()
+        self.view.setup(request)
+
+    def test_challengeBank_one_challenge(self):
+        challenge_bank = self.view.get_queryset()
+        self.assertEqual(1, len(challenge_bank))
+
+    def test_challengeBank_one_challenge(self):
+        challenge_bank = self.view.get_queryset()
+        self.assertEqual(1, len(challenge_bank))
+
+    def test_challengeBank_empty(self):
+        out = StringIO()
+        call_command('add_daily_challenge', stdout = out)
+        self.assertIn('Daily challenge added successfully.', out.getvalue())
+        challenge_bank = self.view.get_queryset()
+        self.assertEqual(0, len(challenge_bank))
+
+
+
+
+
+
+
 
 
 
