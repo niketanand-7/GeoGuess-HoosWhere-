@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 {% block head %}
-<style>
-    .gold { background-color: gold; }
-    .silver { background-color: silver; }
-    .bronze { background-color: #cd7f32; }
-  </style>
-  {% endblock head %}
+    <style>
+        .align-middle {
+            display: flex;
+            align-items: center;
+        }
+    </style>
+{% endblock head %}
 {% block content %}
 {% load static %}
 
@@ -28,12 +29,26 @@
                 </thead>
                 <tbody>
                     {% for player in leaderboard %}
-                    <tr class="{% if forloop.counter == 1 %}gold{% elif forloop.counter == 2 %}silver{% elif forloop.counter == 3 %}bronze{% endif %}">
-                        <th scope="row">{{ forloop.counter }}</th>
-                        <td><a href="{% url 'profile' player.id %}">{{ player.name }}</a></td>
-                        <td>{{ player.average_score }}</td>
-                        <td>{{ player.games_played }}</td>
-                        <td>{{ player.rating }}</td>
+                    <tr >
+                        <th scope="row">
+                            {% if forloop.counter == 1 %}
+                                <img width="40" height="40" src="https://img.icons8.com/arcade/64/trophy.png" alt="trophy"/>
+                            {% elif forloop.counter == 2 %}
+                                <img width="40" height="40" src="https://img.icons8.com/arcade/64/second-place-ribbon.png" alt="second-place-ribbon"/>
+                            {% elif forloop.counter == 3 %}
+                                <img width="40" height="40" src="https://img.icons8.com/arcade/64/third-place-ribbon.png" alt="third-place-ribbon"/>
+                            {% else %}
+                                {{ forloop.counter }}
+                            {% endif %}
+                        </th>
+                        <td class="align-middle">
+                            <a href="{% url 'profile' player.id %}">
+                                {{ player.name }}
+                            </a>
+                        </td>
+                        <td class="align-middle">{{ player.average_score }}</td>
+                        <td class="align-middle">{{ player.games_played }}</td>
+                        <td class="align-middle">{{ player.rating }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
