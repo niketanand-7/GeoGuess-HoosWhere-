@@ -13,7 +13,7 @@ from .models import Challenge, Guess
 from .forms import ChallengeForm, ApproveChallengeForm
 from .cron import generate_daily_challenge
 from django.db import transaction, IntegrityError
-from .views import LeaderboardView, ChallengeBankView
+from .views import LeaderboardView, ChallengeBankView, AdminUsersView, edit_user
 from io import StringIO
 from django.core.management import call_command
 import os
@@ -458,6 +458,25 @@ class ChallengeBankTests(TestCase):
         self.assertIn('Daily challenge added successfully.', out.getvalue())
         challenge_bank = self.view.get_queryset()
         self.assertEqual(0, len(challenge_bank))
+
+# class AdminUsersViewTests(TestCase):
+#     def setUp(self):
+#         self.user = User.objects.create_user(
+#             username='admin_user',
+#             password='password',
+#             is_staff=True,
+#             is_superuser=True
+#         )
+#         self.challenge = Challenge.objects.create(
+#             user=self.user,
+#             image='path/to/image.jpg',
+#             longitude=123.45,
+#             latitude=67.89,
+#             approve_status=True
+#         )
+#         self.factory = RequestFactory()
+
+
 
 
 

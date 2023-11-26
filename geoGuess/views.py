@@ -154,6 +154,7 @@ class DailyChallengeView(LoginRequiredMixin, UserPassesTestMixin, generic.Detail
         context['maps_api_key'] = os.environ.get('GOOGLE_MAPS_API_KEY')
         # Sets information for the challenge being used
         context['Challenge'] = self.get_object().challenge
+        context['DailyChallenge'] = DailyChallenge.objects.get(challenge=self.get_object().challenge)
 
         print(self.get_template_names())
         if 'user/daily_challenge_guessed.html' in self.get_template_names():

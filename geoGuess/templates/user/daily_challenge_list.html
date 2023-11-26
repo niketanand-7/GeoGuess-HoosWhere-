@@ -75,7 +75,7 @@
         <div class="row justify-content-center">
             {% with sorted_challenges=daily_challenge_list|dictsortreversed:"timestamp" %}
             {% for daily_challenge in sorted_challenges %}
-            {% if not forloop.last %} <!-- Skip the first one since it's already displayed above -->
+            {% if not forloop.first %} <!-- Skip the first one since it's already displayed above -->
             <div class="col-auto challenge-tile small mb-3 mx-3">
                 <a href="{% url 'daily_challenge' daily_challenge.id %}">
                     <div class="challenge-image" style="background-image: url('{{ daily_challenge.challenge.image.url }}');"></div>
