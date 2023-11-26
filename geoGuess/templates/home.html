@@ -7,9 +7,8 @@
   .card {
     border-radius: 20px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1), 0 0 25px #4285F4, 0 0 50px #4285F4;
-    margin-top: 10vh;
+   
   }
-
   .user-icon-home {
     border-radius: 50%;
     border: 3px solid white;
@@ -18,18 +17,15 @@
     display: block;
     margin: 20px auto 20px;
   }
-
   .btn-secondary {
     background-color: #4285F4;
     color: white;
   }
-
   .app-logo {
     width: 150px;
     margin: 0 auto 20px; 
     display: block; 
   }
-
   .centered-container {
     text-align: center;
   }
@@ -40,29 +36,33 @@
   <div class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-md-6">
-        <div class="card p-5">
-          <div class="centered-container">
-            <img src="{% static 'Game Logo.png' %}" alt="HoosWhere Logo" class="app-logo">
-            <h2>HoosWhere?</h2>
-            {% if user.is_authenticated %}
-              <img class="user-icon user-icon-home"
-                  src="{{ user.socialaccount_set.all.0.get_avatar_url }}"
-                  alt="User Image" />
-              <h4>Welcome, {{ user.socialaccount_set.all.0.extra_data.name }}</h4>
-              <p class="text-muted">Role: {% if user.is_superuser %}Admin User{% else %}Normal User{% endif %}</p>
-              <p class="text-muted">Email: {{ user.email }}</p>
-              <a href="{% url 'account_logout' %}" class="btn btn-danger mt-3">
-                Logout
-              </a>
-            {% else %}
-              <a href="{% provider_login_url 'google' %}" class="btn btn-secondary mt-3">
-                <i class="fa fa-google fa-fw"></i> Login with Google
-              </a>
-            {% endif %}
+          <div class="card p-5">
+              <div class="centered-container">
+                  {% if not user.is_authenticated %}
+                      <img src="{% static 'Game Logo.png' %}" alt="HoosWhere Logo" class="app-logo">
+                      <h2>HoosWhere?</h2>
+                  {% endif %}
+                  
+                  {% if user.is_authenticated %}
+                      <img class="user-icon user-icon-home"
+                          src="{{ user.socialaccount_set.all.0.get_avatar_url }}"
+                          alt="User Image" />
+                      <h4>Welcome, {{ user.socialaccount_set.all.0.extra_data.name }}</h4>
+                      <p class="text-muted">Role: {% if user.is_superuser %}Admin User{% else %}Normal User{% endif %}</p>
+                      <p class="text-muted">Email: {{ user.email }}</p>
+                      <p>Leaderboard Position: {{ leaderboard_position|default_if_none:"Not ranked" }}</p>
+                      <p>Total Points: {{ player_stats.rating|default_if_none:"0" }}</p>
+                      <a href="{% url 'account_logout' %}" class="btn btn-danger mt-3">
+                          Logout
+                      </a>
+                  {% else %}
+                      <a href="{% provider_login_url 'google' %}" class="btn btn-secondary mt-3">
+                          <i class="fa fa-google fa-fw"></i> Login with Google
+                      </a>
+                  {% endif %}
+              </div>
           </div>
-        </div>
       </div>
-    </div>
   </div>
 </body>
 {% endblock content %}

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load nav_bar %}
+{% load static %}
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -35,7 +36,10 @@
       {% if user.is_superuser %}
       <nav class="navbar navbar-expand-lg sticky-top bg-body-tertiary" style="z-index: 1000; background-image: linear-gradient(120deg, #f4f4f8, #e0eafc)">
         <div class="container-fluid">
-          <a class="navbar-brand" href="{% url 'home' %}">HoosWhere?</a>
+          <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+            HoosWhere?
+            <img src="{% static 'Game Logo.png' %}" alt="Logo" style="height:40px; width:auto; margin-right:10px;">
+          </a>
           <button
             class="navbar-toggler"
             type="button"
@@ -61,7 +65,10 @@
       {% else %}
       <nav class="navbar navbar-expand-lg sticky-top bg-body-tertiary" style="z-index: 1000; background-image: linear-gradient(120deg, #f4f4f8, #e0eafc)">
         <div class="container-fluid">
-          <a class="navbar-brand" href="{% url 'home' %}">HoosWhere?</a>
+          <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+            HoosWhere?
+            <img src="{% static 'Game Logo.png' %}" alt="Logo" style="height:40px; width:auto; margin-right:10px;">
+          </a>
           <button
             class="navbar-toggler"
             type="button"
