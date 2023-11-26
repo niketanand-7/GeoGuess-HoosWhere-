@@ -1,27 +1,34 @@
 {% extends 'base.html' %}
 {% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'geoGuess.css' %}" type="text/css"/>
+
 <title>Challenge Bank</title>
 
-<div class="container p-5 d-flex align-items-center justify-content-center">
-    <div style="width: 500px">
-        <h2 class="text-center">Approved Challenges Waiting to be a Daily Challenge</h2>
-        <h4 class="text-center">Number left: {{ Count }}</h4>
-        <div>
-            <ul class="list-group mt-4" style="max-width: 600px">
-                {% for Challenge in challenge_list %}
+<body>
+    <div class="container p-5 d-flex align-items-center justify-content-center">
+        <div style="width: 500px">
+            <h2 class="text-center">Approved Challenges Waiting to be a Daily Challenge</h2>
+            <h4 class="text-center">Number left: {{ Count }}</h4>
+            <div>
+                <ul class="list-group mt-4" style="max-width: 600px">
+                    {% for Challenge in challenge_list %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <img src="{{ Challenge.image.url }}" style="height:100%; max-width: 55%; border-radius: 5%;">
+                            <div>
+                                Submitted by {{ Challenge.user }}
+                            </div>
+                        </li>
+                    {% empty %}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <img src="{{ Challenge.image.url }}" style="height:100%; max-width: 55%; border-radius: 5%;">
-                        <div>
-                            Submitted by {{ Challenge.user }}
-                        </div>
+                        No submissions left to be a daily challenge
                     </li>
-                {% empty %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    No submissions left to be a daily challenge
-                </li>
-                {% endfor %}
-            </ul>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
     </div>
-</div>
+</body>
+
 {% endblock content %}

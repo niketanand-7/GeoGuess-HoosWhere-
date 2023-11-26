@@ -33,7 +33,7 @@
   <body>
     {% if user.is_authenticated %}
       {% if user.is_superuser %}
-      <nav class="navbar navbar-expand-lg bg-body-tertiary" >
+      <nav class="navbar navbar-expand-lg sticky-top bg-body-tertiary" style="z-index: 1000; background-image: linear-gradient(120deg, #f4f4f8, #e0eafc)">
         <div class="container-fluid">
           <a class="navbar-brand" href="{% url 'home' %}">HoosWhere?</a>
           <button
@@ -59,7 +59,7 @@
                 <a class="nav-link" href="{% url 'challenge_bank' %}">See Challenge Bank</a>
               </li>
       {% else %}
-      <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <nav class="navbar navbar-expand-lg sticky-top bg-body-tertiary" style="z-index: 1000; background-image: linear-gradient(120deg, #f4f4f8, #e0eafc)">
         <div class="container-fluid">
           <a class="navbar-brand" href="{% url 'home' %}">HoosWhere?</a>
           <button

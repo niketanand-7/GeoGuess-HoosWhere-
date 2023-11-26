@@ -1,34 +1,39 @@
 {% extends 'base.html' %}
 {% block content %}
-<title>View Submissions</title>
-<div class="container p-5 pt-0 d-flex align-items-center justify-content-center">
-      <div style="width: 500px">
-        <h1 class="text-center">Your Submissions</h1>
-        <ul class="list-group mt-4" style="max-width: 600px">
-          {% for Challenge in challenges %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <img src="{{ Challenge.image.url }}" style="height:100%; max-width: 35%; border-radius: 5%;">
-              {% if Challenge.approve_status %}
-                <div class="btn btn-success btn-sm" style="pointer-events: none;"> Approved </div>
-              {% else %}
-                {% if Challenge.approval_feedback == '' %}
-                  <div class="btn btn-warning btn-sm" style="pointer-events: none;"> Waiting for Approval</div>
-                {% else %}
-                  <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="{{Challenge.approval_feedback}}">
-                    <button class="btn btn-danger btn-sm" type="button" >Denied</button>
-                  </span>
-                {% endif %}
-              {% endif %}
-            </li>
-          {% empty %}
-          <li class="list-group-item d-flex justify-content-between align-items-center"> You have no submissions </li>
-          {% endfor %}
-        </ul>
-      </div>
-</div>
+{% load static %}
+<link rel="stylesheet" href="{% static 'geoGuess.css' %}" type="text/css"/>
 
-<script>
-  let popoverTriggerItem = document.querySelectorAll('[data-bs-toggle="popover"]')
-  let popoverList = [...popoverTriggerItem].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
-</script>
+<body>
+  <title>View Submissions</title>
+  <div class="container p-5 pt-0 my-4 d-flex align-items-center justify-content-center">
+    <div style="width: 500px">
+      <h1 class="text-center">Your Submissions</h1>
+      <ul class="list-group mt-4" style="max-width: 600px">
+        {% for Challenge in challenges %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <img src="{{ Challenge.image.url }}" style="height:100%; max-width: 35%; border-radius: 5%;">
+            {% if Challenge.approve_status %}
+              <div class="btn btn-success btn-sm" style="pointer-events: none;"> Approved </div>
+            {% else %}
+              {% if Challenge.approval_feedback == '' %}
+                <div class="btn btn-warning btn-sm" style="pointer-events: none;"> Waiting for Approval</div>
+              {% else %}
+                <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="{{Challenge.approval_feedback}}">
+                  <button class="btn btn-danger btn-sm" type="button" >Denied</button>
+                </span>
+              {% endif %}
+            {% endif %}
+          </li>
+        {% empty %}
+        <li class="list-group-item d-flex justify-content-between align-items-center"> You have no submissions </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    let popoverTriggerItem = document.querySelectorAll('[data-bs-toggle="popover"]')
+    let popoverList = [...popoverTriggerItem].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+  </script>
+</body>
 {% endblock content %}

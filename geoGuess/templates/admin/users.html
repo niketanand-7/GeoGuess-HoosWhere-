@@ -25,7 +25,9 @@
     <title>Document</title>
   </head>
   <body>
-    {% block content %} {% if user.is_superuser %}
+    {% block content %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'geoGuess.css' %}" type="text/css"/>
 
     <div class="container p-5 d-flex align-items-center justify-content-center">
       <div style="width: 500px">
@@ -79,8 +81,6 @@
       </div>
     </div>
 
-    
-    {% endif %} 
-    {% endblock %}
+  {% endblock %}
   </body>
 </html>
