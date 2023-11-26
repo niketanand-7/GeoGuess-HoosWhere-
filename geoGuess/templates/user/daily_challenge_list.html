@@ -71,19 +71,21 @@
     {% endwith %}
 
     <!-- Previous Challenges -->
-    <ul class="challenge-list">
-        {% for daily_challenge in daily_challenge_list %}
-        {% if not forloop.last %} <!-- Skip the first one since it's already displayed above -->
-        <li class="challenge-tile small mx-2">
-            <a href="{% url 'daily_challenge' daily_challenge.id %}">
-                <div class="challenge-image" style="background-image: url('{{ daily_challenge.challenge.image.url }}');"></div>
-                <div class="challenge-date">{{ daily_challenge.timestamp|date:"F d, Y" }}</div>
-            </a>
-        </li>
-        {% endif %}
-        {% empty %}
-        <li>No previous daily challenges available.</li>
-        {% endfor %}
-    </ul>
+    <div class="container-fluid text-center my-5">
+        <div class="row justify-content-center">
+            {% for daily_challenge in daily_challenge_list %}
+            {% if not forloop.last %} <!-- Skip the first one since it's already displayed above -->
+            <div class="col-auto challenge-tile small mb-3 mx-3">
+                <a href="{% url 'daily_challenge' daily_challenge.id %}">
+                    <div class="challenge-image" style="background-image: url('{{ daily_challenge.challenge.image.url }}');"></div>
+                    <div class="challenge-date">{{ daily_challenge.timestamp|date:"F d, Y" }}</div>
+                </a>
+            </div>
+            {% endif %}
+            {% empty %}
+            <div class="col text-center">No previous daily challenges available.</div>
+            {% endfor %}
+        </div>
+    </div>
 </body>
 {% endblock content %}
