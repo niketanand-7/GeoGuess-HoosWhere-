@@ -1,6 +1,4 @@
-from django.http import HttpResponse, HttpResponseRedirect
-from django.views.generic import TemplateView
-from django.contrib import messages
+from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
@@ -9,8 +7,8 @@ from .models import Challenge, Guess, DailyChallenge
 from django.views import generic
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import ChallengeForm, GuessForm, ApproveChallengeForm, UserAuthForm
-import os, math, googlemaps
+from .forms import ChallengeForm, ApproveChallengeForm
+import os
 
 
 # Checks if the user has guessed a challenge
@@ -178,17 +176,6 @@ class DailyChallengeView(LoginRequiredMixin, UserPassesTestMixin, generic.Detail
     
     def test_func(self):
         return self.request.user.is_authenticated and not self.request.user.is_staff
-
-# class MapsView(LoginRequiredMixin, TemplateView):
-#     template_name = 'user/maps.html'
-#     login_url = '/'
-
-#     form_class = GuessForm
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['maps_api_key'] = os.environ.get('GOOGLE_MAPS_API_KEY')
-#         context['Challenge'] = Challenge.objects.filter(approve_status=True).first() #sets the information for the challenge being used
-#         return context    
 
 class ViewSubmissions(LoginRequiredMixin, UserPassesTestMixin, generic.ListView):
     template_name = "user/viewSubmissions.html"

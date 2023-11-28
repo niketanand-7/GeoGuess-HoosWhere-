@@ -254,8 +254,8 @@ class GuessModelTestCase(TestCase):
         self.challenge = Challenge.objects.create(
             user=self.user,
             image='path/to/image.jpg',
-            longitude=123.45,
-            latitude=67.89,
+            longitude=38.031587943575246, 
+            latitude=-78.5108602729666,
             approve_status=True
         )
 
@@ -263,8 +263,8 @@ class GuessModelTestCase(TestCase):
         guess = Guess.objects.create(
             user=self.user,
             challenge=self.challenge,
-            longitude=123.45,
-            latitude=67.89,
+            longitude=38.031587943575246, 
+            latitude=-78.5108602729666,
         )
 
         saved_guess = Guess.objects.get(pk=guess.pk)
@@ -275,20 +275,58 @@ class GuessModelTestCase(TestCase):
         self.assertEqual(saved_guess.score, 1000)
         self.assertEqual(saved_guess.distanceFromAnswer, 0.0)
 
-    def test_updating_guess_fields(self):
+    def test_guess_is_close_enough(self):
         guess = Guess.objects.create(
             user=self.user,
             challenge=self.challenge,
-            longitude=123.448,
-            latitude=67.888,
+            longitude=38.03158534376525, 
+            latitude=-78.5107887739817
+        )
+
+        saved_guess = Guess.objects.get(pk=guess.pk)
+
+        # Check that the Guess has been correctly saved and that within 10 meters of the answer
+        self.assertEqual(saved_guess.user, self.user)
+        self.assertEqual(saved_guess.challenge, self.challenge)
+        self.assertEqual(saved_guess.score, 1000)
+        self.assertTrue(saved_guess.distanceFromAnswer < 10.0)
+
+    def test_update_fields_far(self):
+        guess = Guess.objects.create(
+            user=self.user,
+            challenge=self.challenge,
+            longitude=43.02239253427242, 
+            latitude=-67.16129125101716
         )
         guess.save()
 
         updated_guess = Guess.objects.get(pk=guess.pk)
+        updated_guess.longitude=38.134471800228155 
+        updated_guess.latitude=-78.50693744045769
+
+        updated_guess.save()
+        # Check that the fields have been updated correctly
+        self.assertEqual(updated_guess.score, 3)
+        self.assertTrue(math.isclose(2330.5083, updated_guess.distanceFromAnswer, rel_tol=1e-3, abs_tol=1e-3))
+
+    def test_updating_guess_fields(self):
+        guess = Guess.objects.create(
+            user=self.user,
+            challenge=self.challenge,
+            longitude=38.031587943575246, 
+            latitude=-78.5108602729666,
+        )
+        guess.save()
+
+        updated_guess = Guess.objects.get(pk=guess.pk)
+        updated_guess.longitude=38.03154885863617 
+        updated_guess.latitude=-78.50987120841747
+
+        updated_guess.save()
 
         # Check that the fields have been updated correctly
-        self.assertEqual(updated_guess.score, 564)
-        self.assertTrue(math.isclose(238.375, updated_guess.distanceFromAnswer, rel_tol=1e-3, abs_tol=1e-3))
+        self.assertEqual(updated_guess.score, 777)
+        self.assertTrue(math.isclose(110.4317, updated_guess.distanceFromAnswer, rel_tol=1e-3, abs_tol=1e-3))
 
     def test_string_representation(self):
         # Create a Guess instance
