@@ -11,20 +11,7 @@ from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ChallengeForm, GuessForm, ApproveChallengeForm, UserAuthForm
 import os, math, googlemaps
-from geopy.distance import geodesic
 
-# Uses Google Maps API to get the distance between two coordinates in METERS
-def get_distance(lat1, lon1, lat2, lon2):
-    return geodesic((lat1, lon1), (lat2, lon2)).meters
-
-# Calculates the score / 1000 based on the distance from the correct answer in METERS
-def calculate_score(distance):
-    max_score = 1000
-    max_score_range = 10
-    dropoff_rate = 400
-
-    # Max score is 1000, will give the max score if within 10 meters
-    return min(int(max_score * math.exp(-(distance - max_score_range) / dropoff_rate)), max_score)
 
 # Checks if the user has guessed a challenge
 def hasBeenGuessed(challenge, user):
@@ -168,12 +155,8 @@ class DailyChallengeView(LoginRequiredMixin, UserPassesTestMixin, generic.Detail
         challenge = self.get_object().challenge
 
         if longitude != '' and latitude != '':
-            # TODO: add checks for the latitude and longitude to make sure they are valid
-            distance = get_distance(latitude, longitude, challenge.latitude, challenge.longitude)
-            if distance is None:
-                return HttpResponse("Internal Server Error")
-            score = calculate_score(distance)
-            guess = Guess(user=request.user, challenge=challenge, score=score, distanceFromAnswer=distance, longitude=longitude, latitude=latitude)
+            # TODO: add checks for the latitude and longitude to make sure they are valid            
+            guess = Guess(user=request.user, challenge=challenge, longitude=longitude, latitude=latitude)
             guess.save()
             return redirect("daily_challenge", pk=self.get_object().pk)
          

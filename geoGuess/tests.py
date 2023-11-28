@@ -16,7 +16,7 @@ from django.db import transaction, IntegrityError
 from .views import LeaderboardView, ChallengeBankView, AdminUsersView, edit_user
 from io import StringIO
 from django.core.management import call_command
-import os
+import os, math
 
 
 class HomeViewTest(TestCase):
@@ -236,15 +236,15 @@ class ChallengeGuessIntegrationTest(TestCase):
         guess = Guess.objects.create(
             user=self.user,
             challenge=self.challenge,
-            score=100,
-            distanceFromAnswer=0.0
+            longitude=123.45,
+            latitude=67.89,
         )
 
         self.assertEqual(self.challenge.guess_set.count(), 1)
         self.assertEqual(self.challenge.guess_set.first(), guess)
 
         # Test the Guess attributes
-        self.assertEqual(guess.score, 100)
+        self.assertEqual(guess.score, 1000)
         self.assertEqual(guess.distanceFromAnswer, 0.0)
 
 
@@ -263,8 +263,8 @@ class GuessModelTestCase(TestCase):
         guess = Guess.objects.create(
             user=self.user,
             challenge=self.challenge,
-            score=100,
-            distanceFromAnswer=0.0
+            longitude=123.45,
+            latitude=67.89,
         )
 
         saved_guess = Guess.objects.get(pk=guess.pk)
@@ -272,24 +272,23 @@ class GuessModelTestCase(TestCase):
         # Check that the Guess has been correctly saved and its attributes are correct
         self.assertEqual(saved_guess.user, self.user)
         self.assertEqual(saved_guess.challenge, self.challenge)
-        self.assertEqual(saved_guess.score, 100)
+        self.assertEqual(saved_guess.score, 1000)
         self.assertEqual(saved_guess.distanceFromAnswer, 0.0)
 
     def test_updating_guess_fields(self):
         guess = Guess.objects.create(
             user=self.user,
-            challenge=self.challenge
+            challenge=self.challenge,
+            longitude=123.448,
+            latitude=67.888,
         )
-
-        guess.score = 80
-        guess.distanceFromAnswer = 20.0
         guess.save()
 
         updated_guess = Guess.objects.get(pk=guess.pk)
 
         # Check that the fields have been updated correctly
-        self.assertEqual(updated_guess.score, 80)
-        self.assertEqual(updated_guess.distanceFromAnswer, 20.0)
+        self.assertEqual(updated_guess.score, 564)
+        self.assertTrue(math.isclose(238.375, updated_guess.distanceFromAnswer, rel_tol=1e-3, abs_tol=1e-3))
 
     def test_string_representation(self):
         # Create a Guess instance
