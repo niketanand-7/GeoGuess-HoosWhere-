@@ -30,7 +30,7 @@
     text-align: center;
   }
 </style>
-
+<title>HoosWhere?</title>
 <link rel="stylesheet" href="{% static 'geoGuess.css' %}" type="text/css" />
 <body>
   <div class="container mt-5">
@@ -51,7 +51,7 @@
                       <p class="text-muted">Role: {% if user.is_superuser %}Admin User{% else %}Normal User{% endif %}</p>
                       <p class="text-muted">Email: {{ user.email }}</p>
                       <p>Leaderboard Position: {{ leaderboard_position|default_if_none:"Not ranked" }}</p>
-                      <p>Total Points: {{ player_stats.rating|default_if_none:"0" }}</p>
+                      <p>Rating: {{ player_stats.rating|default_if_none:"0" }}</p>
                       <a href="{% url 'account_logout' %}" class="btn btn-danger mt-3">
                           Logout
                       </a>
