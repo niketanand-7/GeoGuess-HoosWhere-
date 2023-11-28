@@ -1,6 +1,4 @@
-from django.http import HttpResponse, HttpResponseRedirect
-from django.views.generic import TemplateView
-from django.contrib import messages
+from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
@@ -9,22 +7,9 @@ from .models import Challenge, Guess, DailyChallenge
 from django.views import generic
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import ChallengeForm, GuessForm, ApproveChallengeForm, UserAuthForm
-import os, math, googlemaps
-from geopy.distance import geodesic
+from .forms import ChallengeForm, ApproveChallengeForm
+import os
 
-# Uses Google Maps API to get the distance between two coordinates in METERS
-def get_distance(lat1, lon1, lat2, lon2):
-    return geodesic((lat1, lon1), (lat2, lon2)).meters
-
-# Calculates the score / 1000 based on the distance from the correct answer in METERS
-def calculate_score(distance):
-    max_score = 1000
-    max_score_range = 10
-    dropoff_rate = 400
-
-    # Max score is 1000, will give the max score if within 10 meters
-    return min(int(max_score * math.exp(-(distance - max_score_range) / dropoff_rate)), max_score)
 
 # Checks if the user has guessed a challenge
 def hasBeenGuessed(challenge, user):
@@ -33,7 +18,7 @@ def hasBeenGuessed(challenge, user):
 def rating_calc(average_score, games_played):
     # Determines how much weight to give to average score vs max score for leaderboard
     weight = 0.8
-    return int((weight * average_score) + ((1 - weight) * games_played) * 1000)
+    return int((weight * average_score) + ((1 - weight) * games_played * average_score))
 
 # Gets the leaderboard of players
 def get_leaderboard():
@@ -168,12 +153,8 @@ class DailyChallengeView(LoginRequiredMixin, UserPassesTestMixin, generic.Detail
         challenge = self.get_object().challenge
 
         if longitude != '' and latitude != '':
-            # TODO: add checks for the latitude and longitude to make sure they are valid
-            distance = get_distance(latitude, longitude, challenge.latitude, challenge.longitude)
-            if distance is None:
-                return HttpResponse("Internal Server Error")
-            score = calculate_score(distance)
-            guess = Guess(user=request.user, challenge=challenge, score=score, distanceFromAnswer=distance, longitude=longitude, latitude=latitude)
+            # TODO: add checks for the latitude and longitude to make sure they are valid            
+            guess = Guess(user=request.user, challenge=challenge, longitude=longitude, latitude=latitude)
             guess.save()
             return redirect("daily_challenge", pk=self.get_object().pk)
          
@@ -195,17 +176,6 @@ class DailyChallengeView(LoginRequiredMixin, UserPassesTestMixin, generic.Detail
     
     def test_func(self):
         return self.request.user.is_authenticated and not self.request.user.is_staff
-
-# class MapsView(LoginRequiredMixin, TemplateView):
-#     template_name = 'user/maps.html'
-#     login_url = '/'
-
-#     form_class = GuessForm
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['maps_api_key'] = os.environ.get('GOOGLE_MAPS_API_KEY')
-#         context['Challenge'] = Challenge.objects.filter(approve_status=True).first() #sets the information for the challenge being used
-#         return context    
 
 class ViewSubmissions(LoginRequiredMixin, UserPassesTestMixin, generic.ListView):
     template_name = "user/viewSubmissions.html"

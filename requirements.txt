@@ -7,7 +7,6 @@ Pillow
 django-crontab
 boto3
 django-storages
-googlemaps
 selenium
 validators
 geopy
