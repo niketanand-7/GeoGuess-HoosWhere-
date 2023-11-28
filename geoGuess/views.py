@@ -18,7 +18,7 @@ def hasBeenGuessed(challenge, user):
 def rating_calc(average_score, games_played):
     # Determines how much weight to give to average score vs max score for leaderboard
     weight = 0.8
-    return int((weight * average_score) + ((1 - weight) * games_played) * 1000)
+    return int((weight * average_score) + ((1 - weight) * games_played * average_score))
 
 # Gets the leaderboard of players
 def get_leaderboard():
