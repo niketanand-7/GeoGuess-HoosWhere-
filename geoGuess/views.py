@@ -216,6 +216,11 @@ class ProfileView(generic.DetailView, UserPassesTestMixin):
     def test_func(self):
         return self.request.user.is_authenticated and not self.request.user.is_staff
 
+class AboutView(generic.TemplateView, UserPassesTestMixin, LoginRequiredMixin):
+    template_name = "user/about.html"
+    def test_func(self):
+        return self.request.user.is_authenticated and not self.request.user.is_staff
+
 ##########################################################################3
 #Admin Views
 class AdminUsersView(LoginRequiredMixin, UserPassesTestMixin, generic.ListView):
