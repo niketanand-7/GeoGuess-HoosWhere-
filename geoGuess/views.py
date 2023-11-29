@@ -185,7 +185,7 @@ class ViewSubmissions(LoginRequiredMixin, UserPassesTestMixin, generic.ListView)
 
     # get all google registered users
     def get_queryset(self):
-        return Challenge.objects.filter(user=self.request.user)
+        return Challenge.objects.order_by('-id').filter(user=self.request.user)
     
     def test_func(self):
         return self.request.user.is_authenticated and not self.request.user.is_staff
