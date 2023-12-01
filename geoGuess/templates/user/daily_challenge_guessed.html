@@ -34,7 +34,7 @@
         <div class="alert alert-success d-flex align-items-center my-4 mx-auto" style="max-width: 55%;" role="alert">
             <svg class="bi flex-shrink-0 me-2" role="img"  style="height: 20px; width: 20px;" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
             <div>
-                Your guess was {{ Guess.distanceFromAnswer|floatformat:2 }} meters away from answer. You earned {{ Guess.score }} points!
+                Your guess was {{ Guess.distanceFromAnswer|floatformat:2 }} meters away from answer. You earned {{ Guess.score }} of 1000 points!
             </div>
         </div>
     </div>
@@ -60,16 +60,18 @@
                 guess_marker = new google.maps.Marker({
                     visible: true,
                     position: new google.maps.LatLng(guess_latitude,guess_longitude),
-                    map: map
+                    map: map,
                 });
                 // TODO: make different color marker for answer
-                // var answer_latitude = {{ Guess.challenge.latitude }};
-                // var answer_longitude = {{ Guess.challenge.longitude }};
-                // const marker = new AdvancedMarkerElement({
-                //     map,
-                //     position: { lat: answer_latitude, lng: answer_longitude },
-                // });
-
+                //Can Change If Needed, AdvancedMarkerElement enables Maps Javascript API
+                var answer_latitude = {{ Guess.challenge.latitude }};
+                var answer_longitude = {{ Guess.challenge.longitude }};
+                answer_marker = new google.maps.Marker({
+                     map: map,
+                     position: { lat: answer_latitude, lng: answer_longitude },
+                     icon: { url: "http://maps.google.com/mapfiles/ms/icons/green-dot.png"},
+                     title: "Answer"
+                 });
             }
 
             initialize();

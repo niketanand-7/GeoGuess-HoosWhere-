@@ -18,7 +18,7 @@
       crossorigin="anonymous"
     ></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GeoGuess App Login</title>
+    <link rel="icon" href="{% static 'Game Logo.png' %}">
     <style>
       /* Custom styles for the base */
       body {
@@ -100,6 +100,7 @@
             class="navbar-text d-flex align-items-center"
             style="height: 30px"
           >
+            {% block user_greeting %}
             <a href="{% url 'home' %}" style="text-decoration: none">
               Hello, {{ user.socialaccount_set.all.0.extra_data.name }}!
             <img
@@ -109,6 +110,7 @@
               style="height: 30px; width: 30px; border-radius: 50%;"
             />
             </a>
+            {% endblock %}
           </span>
         </div>
       </div>
