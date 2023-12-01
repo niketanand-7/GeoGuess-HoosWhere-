@@ -44,7 +44,7 @@
                   <b>{{user}}</b>
                   <div class="form-check form-switch mx-3" style="margin-bottom: 0;">
                     <label class="form-check-label" for="admin">Admin</label>
-                    <input id="admin" name="admin" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" {% if user.is_superuser %}checked{% endif %}>
+                    <input id="admin" name="admin" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" {% if user.is_staff %}checked{% endif %}>
                   </div> 
                 </div>
                 <div class="justify-content-end d-flex align-items-center">

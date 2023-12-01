@@ -273,7 +273,6 @@ def edit_user(request, user_id):
         else:
             admin = False
 
-        user.is_superuser = admin
         user.is_staff = admin
         user.save()
 

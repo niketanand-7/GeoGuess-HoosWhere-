@@ -48,7 +48,7 @@
                           src="{{ user.socialaccount_set.all.0.get_avatar_url }}"
                           alt="User Image" />
                       <h4>Welcome, {{ user.socialaccount_set.all.0.extra_data.name }}</h4>
-                      <p class="text-muted">Role: {% if user.is_superuser %}Admin User{% else %}Normal User{% endif %}</p>
+                      <p class="text-muted">Role: {% if user.is_staff %}Admin User{% else %}Normal User{% endif %}</p>
                       <p class="text-muted">Email: {{ user.email }}</p>
                       <p>Leaderboard Position: {{ leaderboard_position|default_if_none:"Not ranked" }}</p>
                       <p>Total Points: {{ player_stats.rating|default_if_none:"0" }}</p>

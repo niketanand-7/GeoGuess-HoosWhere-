@@ -33,7 +33,7 @@
   </head>
   <body>
     {% if user.is_authenticated %}
-      {% if user.is_superuser %}
+      {% if user.is_staff %}
       <nav class="navbar navbar-expand-lg sticky-top bg-body-tertiary" style="z-index: 1000; background-image: linear-gradient(120deg, #f4f4f8, #e0eafc)">
         <div class="container-fluid">
           <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
