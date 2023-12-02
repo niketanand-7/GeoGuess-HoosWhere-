@@ -4,6 +4,7 @@
         .align-middle {
             display: flex;
             align-items: center;
+            justify-content: center;
         }
     </style>
 {% endblock head %}
@@ -19,7 +20,7 @@
             <h1 class="text-center">Leaderboard</h1>
             <table class="table">
                 <thead>
-                    <tr>
+                    <tr class="text-center">
                         <th scope="col">#</th>
                         <th scope="col">Name</th>
                         <th scope="col">Avg Score</th>
@@ -30,7 +31,7 @@
                 <tbody>
                     {% for player in leaderboard %}
                     <tr >
-                        <th scope="row">
+                        <th class="text-center" scope="row">
                             {% if forloop.counter == 1 %}
                                 <img width="40" height="40" src="https://img.icons8.com/arcade/64/trophy.png" alt="trophy"/>
                             {% elif forloop.counter == 2 %}
@@ -41,14 +42,14 @@
                                 {{ forloop.counter }}
                             {% endif %}
                         </th>
-                        <td class="align-middle">
+                        <td class="align-middle text-center">
                             <a href="{% url 'profile' player.id %}">
                                 {{ player.name }}
                             </a>
                         </td>
-                        <td class="align-middle">{{ player.average_score }}</td>
-                        <td class="align-middle">{{ player.games_played }}</td>
-                        <td class="align-middle">{{ player.rating }}</td>
+                        <td class="align-middle text-center">{{ player.average_score }}</td>
+                        <td class="align-middle text-center">{{ player.games_played }}</td>
+                        <td class="align-middle text-center">{{ player.rating }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
