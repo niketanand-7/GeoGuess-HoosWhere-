@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load socialaccount %}
+
+{% block content %}
+<style>
+  .card {
+    border-radius: 20px;
+    /* Blue shadow highlight similar to the provided code snippet */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1), 0 0 25px #4285F4, 0 0 50px #4285F4; 
+  }
+  /* Other styles... */
+</style>
+
+<title>About HoosWhere?</title>
+<link rel="stylesheet" href="{% static 'your-stylesheet.css' %}" type="text/css" />
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card p-5">
+          <h1>About HoosWhere?</h1>
+          <p>
+              HoosWhere? is a geoguesser game designed specifically for the UVA community. It challenges students
+              to put their campus knowledge to the test by identifying different locations around the University of
+              Virginia based on images.
+          </p>
+          <h2>How to Play</h2>
+          <ol>
+              <li>Start the game by logging in with your UVA student credentials.</li>
+              <li>Once logged in, click on Daily Challenge and you will be presented multiple challenges. You can play past challenges or the daily challenge.</li>
+              <li>Your task is to guess the location by placing a pin on the provided map.</li>
+              <li>Submit your guess to see how close you were to the actual location by clicking on submit challenge.</li>
+              <li>Earn points based on how accurate your guess was and climb up the leaderboard!</li>
+          </ol>
+          <p>
+              Whether you're a new student or a seasoned Hoo, this game is a fun way to explore the campus, learn
+              about new spots, and see how well you really know UVA. Get guessing and go Hoos!
+          </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

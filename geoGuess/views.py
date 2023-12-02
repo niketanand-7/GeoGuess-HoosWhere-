@@ -81,7 +81,9 @@ class Home(generic.TemplateView):
             context['player_stats'] = get_player_stats(self.request.user)
             context['leaderboard_position'] = get_user_leaderboard_position(self.request.user)
         return context
-
+#About View
+class AboutView(generic.TemplateView):
+    template_name = "user/about.html"
 
 # View to add a challenge
 class AddChallengeView(LoginRequiredMixin, UserPassesTestMixin, generic.CreateView):

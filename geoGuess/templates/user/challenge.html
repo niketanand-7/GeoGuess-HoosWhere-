@@ -37,7 +37,7 @@
         <input type="hidden" name="latitude" id="id_latitude">
 
         <!-- Map Div -->
-        <div class="text-center" id="map" style="height: 300px; margin: 0 auto;"></div>
+        <div class="text-center" id="map" style="height: 60vh; margin: 0 auto;"></div>
         <br>
         <div id="error-message" class="alert alert-danger align-items-center mx-auto" role="alert" style="display: none; max-width: 42%;">
             <svg class="bi flex-shrink-0 me-2" role="img" style="height: 20px; width: 20px;" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
@@ -58,12 +58,15 @@
 
         map = new google.maps.Map(document.getElementById("map"), {
             center: defaultLocation,
-            zoom: 14
+            mapTypeId: google.maps.MapTypeId.HYBRID,
+            zoom: 18,
+            labels: true,
         });
-
+        map.setTilt(45);
         google.maps.event.addListener(map, 'click', function (event) {
             placeMarker(event.latLng);
         });
+
     }
 
     function placeMarker(location) {
