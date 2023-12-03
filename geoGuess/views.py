@@ -143,10 +143,17 @@ class DailyChallengeView(LoginRequiredMixin, UserPassesTestMixin, generic.Detail
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        daily_challenge = self.get_object()
+        context['daily_leaderboard'] = daily_challenge.get_leaderboard()
         context['maps_api_key'] = os.environ.get('GOOGLE_MAPS_API_KEY')
         # Sets information for the challenge being used
         context['Challenge'] = self.get_object().challenge
         context['DailyChallenge'] = DailyChallenge.objects.get(challenge=self.get_object().challenge)
+
+        # If the user has guessed, include the guess in the context
+        if self.request.user.is_authenticated:
+            guess = Guess.objects.filter(user=self.request.user, challenge=daily_challenge.challenge).first()
+            context['Guess'] = guess
 
         print(self.get_template_names())
         if 'user/daily_challenge_guessed.html' in self.get_template_names():

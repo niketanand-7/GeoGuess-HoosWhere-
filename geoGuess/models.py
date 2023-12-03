@@ -28,6 +28,16 @@ class DailyChallenge(models.Model):
     def __str__(self):
         return f"Daily Challenge {self.pk} from {self.timestamp}"
 
+    def get_leaderboard(self):
+        # Retrieve all guesses for the associated challenge, ordered by score descending
+        guesses = Guess.objects.filter(challenge=self.challenge).order_by('-score')
+        leaderboard = [
+            {'username': guess.user.username, 'score': guess.score}
+            for guess in guesses
+        ]
+        return leaderboard
+
+
 
 
 class Guess(models.Model):

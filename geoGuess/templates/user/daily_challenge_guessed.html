@@ -19,8 +19,8 @@
     <div class="container text-center my-3">
         <div class="pb-2">
             <h1> {{ DailyChallenge.timestamp|date:"F d, Y"}} </h1>
-            <h5> Challenge by {{Guess.challenge.user}}</h5>   
-        </div>   
+            <h5> Challenge by {{Guess.challenge.user}}</h5>
+        </div>
         <div class="row">
             <div class="col-md-6">
                 <img src="{{Challenge.image.url}}" class="img-fluid" style="width: 100%; height: 350px; display: block; margin: 0 auto; border-radius: 5%; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);">
@@ -37,8 +37,51 @@
                 Your guess was {{ Guess.distanceFromAnswer|floatformat:2 }} meters away from answer. You earned {{ Guess.score }} of 1000 points!
             </div>
         </div>
+{% if daily_leaderboard %}
+<div class="my-4">
+    <h2>Top Scores</h2>
+    <div class="table-responsive" style="height: 200px; overflow-y: auto;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in daily_leaderboard %}
+                <tr>
+                    <th class="text-center" scope="row">
+                        {% if forloop.counter == 1 %}
+                            <img width="40" height="40" src="https://img.icons8.com/arcade/64/trophy.png" alt="1st place trophy"/>
+                        {% elif forloop.counter == 2 %}
+                            <img width="40" height="40" src="https://img.icons8.com/arcade/64/second-place-ribbon.png" alt="2nd place ribbon"/>
+                        {% elif forloop.counter == 3 %}
+                            <img width="40" height="40" src="https://img.icons8.com/arcade/64/third-place-ribbon.png" alt="3rd place ribbon"/>
+                        {% else %}
+                            {{ forloop.counter }}
+                        {% endif %}
+                    </th>
+                    <td>{{ entry.username }}</td>
+                    <td>{{ entry.score }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center">No submissions yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-    
+</div>
+{% endif %}
+
+
+
+
+
+
     {% load static %}
       <!-- Google Maps Initialization -->
         <script>
