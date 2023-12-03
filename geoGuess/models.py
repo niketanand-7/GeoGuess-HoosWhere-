@@ -12,7 +12,7 @@ class Challenge(models.Model):
     longitude = models.FloatField()
     latitude = models.FloatField()                              # Store the answer coordinates
     timestamp = models.DateTimeField(auto_now_add=True)         # Automatically set when the challenge is created
-    approve_status = models.BooleanField(default=False)         # whether or not challenge has been approved 
+    approve_status = models.BooleanField(default=False)         # whether or not challenge has been approved
     approval_feedback = models.TextField(default="")            # the feedback given by admin if challenge was denied
 
     def __str__(self):
@@ -24,7 +24,7 @@ class Challenge(models.Model):
 
 class DailyChallenge(models.Model):
     challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE)  # Links to the challenge
-    timestamp = models.DateTimeField(auto_now_add=True)                 # Automatically set when the daily challenge is created 
+    timestamp = models.DateTimeField(auto_now_add=True)                 # Automatically set when the daily challenge is created
     def __str__(self):
         return f"Daily Challenge {self.pk} from {self.timestamp}"
 
@@ -32,7 +32,7 @@ class DailyChallenge(models.Model):
         # Retrieve all guesses for the associated challenge, ordered by score descending
         guesses = Guess.objects.filter(challenge=self.challenge).order_by('-score')
         leaderboard = [
-            {'username': guess.user.username, 'score': guess.score}
+            {'username': guess.user.username, 'score': guess.score, "id": guess.user.id, 'name': guess.user.first_name, }
             for guess in guesses
         ]
         return leaderboard
@@ -43,7 +43,7 @@ class DailyChallenge(models.Model):
 class Guess(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE)
-    score = models.IntegerField(default=0, validators=[MinValueValidator(limit_value=0, message='Score must be greater than or equal to 0')])                # Store the score / 1000 Automatically Calculated        
+    score = models.IntegerField(default=0, validators=[MinValueValidator(limit_value=0, message='Score must be greater than or equal to 0')])                # Store the score / 1000 Automatically Calculated
     distanceFromAnswer = models.FloatField(default=0, validators=[MinValueValidator(limit_value=0.0, message='Distance must be greater than or equal to 0')])# Store in meters, Automatically Calculated
     longitude = models.FloatField(default=0)                            # Store the guessed coordinates
     latitude = models.FloatField(default=0)                             # Store the  coordinates
@@ -57,7 +57,7 @@ def calculate_distance_score(sender, instance, **kwargs):
     distance = get_distance(instance.latitude, instance.longitude, instance.challenge.latitude, instance.challenge.longitude)
     instance.score = calculate_score(distance)
     instance.distanceFromAnswer = distance
-    
+
 pre_save.connect(calculate_distance_score, sender=Guess)
 
 # Uses geopy to get the distance between two coordinates in METERS

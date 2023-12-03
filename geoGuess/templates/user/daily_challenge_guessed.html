@@ -50,21 +50,25 @@
                 </tr>
             </thead>
             <tbody>
-                {% for entry in daily_leaderboard %}
-                <tr>
-                    <th class="text-center" scope="row">
-                        {% if forloop.counter == 1 %}
-                            <img width="40" height="40" src="https://img.icons8.com/arcade/64/trophy.png" alt="1st place trophy"/>
-                        {% elif forloop.counter == 2 %}
-                            <img width="40" height="40" src="https://img.icons8.com/arcade/64/second-place-ribbon.png" alt="2nd place ribbon"/>
-                        {% elif forloop.counter == 3 %}
-                            <img width="40" height="40" src="https://img.icons8.com/arcade/64/third-place-ribbon.png" alt="3rd place ribbon"/>
-                        {% else %}
-                            {{ forloop.counter }}
-                        {% endif %}
-                    </th>
-                    <td>{{ entry.username }}</td>
-                    <td>{{ entry.score }}</td>
+                {% for player in daily_leaderboard %}
+                    <tr >
+                        <th class="text-center" scope="row">
+                            {% if forloop.counter == 1 %}
+                                <img width="40" height="40" src="https://img.icons8.com/arcade/64/trophy.png" alt="trophy"/>
+                            {% elif forloop.counter == 2 %}
+                                <img width="40" height="40" src="https://img.icons8.com/arcade/64/second-place-ribbon.png" alt="second-place-ribbon"/>
+                            {% elif forloop.counter == 3 %}
+                                <img width="40" height="40" src="https://img.icons8.com/arcade/64/third-place-ribbon.png" alt="third-place-ribbon"/>
+                            {% else %}
+                                {{ forloop.counter }}
+                            {% endif %}
+                        </th>
+                        <td class="align-middle text-center">
+                            <a href="{% url 'profile' player.id %}">
+                                {{ player.name }}
+                            </a>
+                        </td>
+                        <td class="align-middle text-center">{{ player.score }}</td>
                 </tr>
                 {% empty %}
                 <tr>
