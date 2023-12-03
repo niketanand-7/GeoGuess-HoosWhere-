@@ -17,6 +17,8 @@ from .views import LeaderboardView, ChallengeBankView, AdminUsersView, edit_user
 from io import StringIO
 from django.core.management import call_command
 import os, math
+from django.contrib.auth.models import User
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 
 class HomeViewTest(TestCase):
@@ -462,6 +464,17 @@ class AddingDailyChallengeTests(TestCase):
         call_command('add_daily_challenge', stdout=out)
         self.assertIn('No challenges to add.', out.getvalue())
 
+    def test_no_repetition_in_daily_challenges(self):
+        # Adding the same challenge twice
+        out = StringIO()
+        call_command('add_daily_challenge', stdout=out)
+        call_command('add_daily_challenge', stdout=out)
+        # Verify that only one daily challenge exists despite two command calls
+        self.assertEqual(DailyChallenge.objects.count(), 1)
+
+
+
+
 class ChallengeBankTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
@@ -485,9 +498,6 @@ class ChallengeBankTests(TestCase):
         challenge_bank = self.view.get_queryset()
         self.assertEqual(1, len(challenge_bank))
 
-    def test_challengeBank_one_challenge(self):
-        challenge_bank = self.view.get_queryset()
-        self.assertEqual(1, len(challenge_bank))
 
     def test_challengeBank_empty(self):
         out = StringIO()
@@ -495,6 +505,153 @@ class ChallengeBankTests(TestCase):
         self.assertIn('Daily challenge added successfully.', out.getvalue())
         challenge_bank = self.view.get_queryset()
         self.assertEqual(0, len(challenge_bank))
+
+
+    def test_challengeBank_template_used(self):
+        self.client.login(username='admin_user', password='password')
+        response = self.client.get(reverse('challenge_bank'))
+        self.assertTemplateUsed(response, 'admin/challengeBank.html')
+
+    def test_challengeBank_multiple_challenges(self):
+        Challenge.objects.create(user=self.user, image='path/to/image2.jpg', longitude=98.76, latitude=54.32,
+                                 approve_status=True)
+        Challenge.objects.create(user=self.user, image='path/to/image3.jpg', longitude=87.65, latitude=43.21,
+                                 approve_status=True)
+        challenge_bank = self.view.get_queryset()
+        self.assertEqual(3, len(challenge_bank))
+
+    def test_challengeBank_unapproved_challenges_excluded(self):
+        Challenge.objects.create(user=self.user, image='path/to/unapproved.jpg', longitude=77.77, latitude=88.88,
+                                 approve_status=False)
+        challenge_bank = self.view.get_queryset()
+        self.assertEqual(1, len(challenge_bank))  # Only the initially created challenge is approved
+
+    def test_challengeBank_different_users(self):
+        another_user = User.objects.create_user(username='another_user', password='password')
+        Challenge.objects.create(user=another_user, image='path/to/another_user_image.jpg', longitude=22.22,
+                                 latitude=33.33, approve_status=True)
+        challenge_bank = self.view.get_queryset()
+        self.assertEqual(2, len(challenge_bank))  # Both challenges from different users should be included
+
+
+class DailyLeaderboardTest(TestCase):
+    def setUp(self):
+        self.user1 = User.objects.create_user(username='testuser1', password='12345')
+        self.user2 = User.objects.create_user(username='testuser2', password='12345')
+
+        # Create a dummy image file for testing
+        image = SimpleUploadedFile(name='test_image.jpg', content=b'', content_type='image/jpeg')
+
+        # Create Challenge instance
+        self.challenge = Challenge.objects.create(
+            user=self.user1,
+            image=image,
+            longitude=-0.1257,
+            latitude=51.5085,
+            timestamp=timezone.now(),
+            approve_status=True
+        )
+
+        # Create DailyChallenge instance
+        self.daily_challenge = DailyChallenge.objects.create(challenge=self.challenge)
+
+        # Create Guess instances linked to the challenge for different users
+        Guess.objects.create(
+            user=self.user1,
+            challenge=self.challenge,
+            score=80
+        )
+        Guess.objects.create(
+            user=self.user2,
+            challenge=self.challenge,
+            score=90
+        )
+
+    def test_daily_leaderboard_content(self):
+        response = self.client.get(reverse('daily_challenge', args=[self.daily_challenge.id]))
+        self.assertEqual(response.status_code, 200)
+
+        # Check if the leaderboard contains the scores of both users
+        self.assertContains(response, self.user1.username)
+        self.assertContains(response, 80)  # Score of user1
+        self.assertContains(response, self.user2.username)
+        self.assertContains(response, 90)  # Score of user2
+
+
+class AboutPageTest(TestCase):
+    def test_about_page_status_code(self):
+        response = self.client.get(reverse('about'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_about_page_template_used(self):
+        response = self.client.get(reverse('about'))
+        self.assertTemplateUsed(response, 'about.html')
+
+    def test_about_page_contains_specific_content(self):
+        response = self.client.get(reverse('about'))
+        self.assertContains(response, "About HoosWhere?")
+        self.assertContains(response, "HoosWhere? is a geoguesser game designed specifically for the UVA community.")
+        self.assertContains(response, "How to Play")
+        self.assertContains(response, "Start the game by logging in with your UVA student credentials.")
+        self.assertContains(response, "Your task is to guess the location by placing a pin on the provided map.")
+        self.assertContains(response, "Earn points based on how accurate your guess was and climb up the leaderboard!")
+        self.assertContains(response, "Whether you're a new student or a seasoned Hoo, this game is a fun way to explore the campus")
+
+
+
+class ProfileRedirectionTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', password='12345')
+        self.client.login(username='testuser', password='12345')
+
+        # Create a dummy image file for testing
+        image = SimpleUploadedFile(name='test_image.jpg', content=b'', content_type='image/jpeg')
+
+        # Create Challenge instances
+        self.challenge1 = Challenge.objects.create(
+            user=self.user,
+            image=image,
+            longitude=-0.1257,
+            latitude=51.5085
+        )
+        self.challenge2 = Challenge.objects.create(
+            user=self.user,
+            image=image,
+            longitude=-0.1278,
+            latitude=51.5074
+        )
+
+        # Create DailyChallenge instances
+        self.daily_challenge1 = DailyChallenge.objects.create(challenge=self.challenge1)
+        self.daily_challenge2 = DailyChallenge.objects.create(challenge=self.challenge2)
+
+        # Create Guess instances linked to the challenges
+        Guess.objects.create(
+            user=self.user,
+            challenge=self.challenge1,
+            score=80
+        )
+        Guess.objects.create(
+            user=self.user,
+            challenge=self.challenge2,
+            score=90
+        )
+
+    def test_profile_to_challenge_redirection(self):
+        response = self.client.get(reverse('profile', args=[self.user.id]))
+        self.assertEqual(response.status_code, 200)
+
+        recent_guesses = response.context['recent_guesses']
+
+        for guess in recent_guesses:
+            daily_challenge_id = guess.daily_challenge.id
+            challenge_response = self.client.get(reverse('daily_challenge', args=[daily_challenge_id]))
+            self.assertEqual(challenge_response.status_code, 200)
+            # Optionally, check for specific content in challenge detail page
+            self.assertContains(challenge_response, guess.challenge.some_specific_attribute)
+
+
+
 
 # class AdminUsersViewTests(TestCase):
 #     def setUp(self):
