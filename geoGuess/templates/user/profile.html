@@ -9,28 +9,61 @@
     <style>
         /* Custom styles */
         .card {
-          border-radius: 20px;
-          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-          min-width: 600px;
-        }
-      
-        .user-icon-home {
-          border: 3px solid white;
-          width: 80px;
-          height: 80px;
-          display: block;
-        }
-        li a {
-            text-decoration: none;
-            display: block; 
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            min-width: 600px;
         }
 
-        /* Style for the link hover effect */
-        li:hover {
-            background-color: #ddd;
+        .user-icon-home {
+            border: 3px solid white;
+            width: 80px;
+            height: 80px;
+            display: block;
         }
-      </style>
-    <div class="container mt-5">
+
+        .score-card {
+            text-decoration: none;
+            display: flex;
+            justify-content: start;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 10px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .score-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background-color: #f8f9fa;
+        }
+
+        .score-card img {
+            width: 80px;
+            height: 80px;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+
+        .score {
+            font-size: 1.5rem;
+            font-weight: bold; /* Make the score bold */
+            margin: 0;
+            padding: 0;
+            color: black;
+            flex-grow: 1;
+            text-align: right;
+        }
+
+        .list-group {
+            padding-left: 0;
+            list-style: none;
+            width: 100%;
+        }
+    </style>
+      <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card p-5">
@@ -61,16 +94,23 @@
             <div class="col-md-6">
                 <div class="card p-5">
                     <h2>Recent Scores</h2>
-                    <ul class="list-group mt-4" style="max-width: 600px">
-                    {% for guess in recent_guesses %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <img src="{{ guess.challenge.image.url }}" style="width: 80px;height: 80px;display: block;">
-                                <h2>
-                                    {{ guess.score }}
-                                </h2>
-                            </li>
-                    {% endfor %}
-                    </ul>
+                    <div class="list-group">
+                        {% for guess in recent_guesses %}
+                            {% if guess.daily_challenge %}
+                                <a href="{% url 'daily_challenge' pk=guess.daily_challenge.pk %}" class="score-card">
+                                    <img src="{{ guess.challenge.image.url }}" alt="Challenge Image">
+                                    <span class="score">{{ guess.score }}</span>
+                                </a>
+                            {% else %}
+                                <div class="score-card">
+                                    <img src="{{ guess.challenge.image.url }}" alt="Challenge Image">
+                                    <span class="score">{{ guess.score }}</span>
+                                </div>
+                            {% endif %}
+                        {% empty %}
+                            <div class="score-card">No recent scores to display.</div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>

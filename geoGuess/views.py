@@ -67,8 +67,12 @@ def get_user_leaderboard_position(user):
             return index
     return None
 def get_recent_guesses(user):
-    guess_list = Guess.objects.filter(user=user)
-    return guess_list.order_by('-id')[:5]
+    guess_list = Guess.objects.filter(user=user).order_by('-id')[:5]
+    # This will add the daily_challenge information to each guess
+    for guess in guess_list:
+        guess.daily_challenge = DailyChallenge.objects.filter(challenge=guess.challenge).first()
+    return guess_list
+
 
 #Home View
 class Home(generic.TemplateView):
@@ -202,6 +206,7 @@ class LeaderboardView(LoginRequiredMixin, UserPassesTestMixin, generic.ListView)
     def test_func(self):
         return self.request.user.is_authenticated and not self.request.user.is_staff
 
+
 class ProfileView(generic.DetailView, UserPassesTestMixin):
     template_name = "user/profile.html"
     context_object_name = "user"
@@ -212,11 +217,24 @@ class ProfileView(generic.DetailView, UserPassesTestMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['stats'] = get_player_stats(self.get_object())
-        context['recent_guesses'] = get_recent_guesses(self.get_object())
+
+        # Retrieve the recent guesses and attach the related DailyChallenge
+        recent_guesses_with_challenge = []
+        for guess in get_recent_guesses(self.get_object()):
+            # Try to get the related DailyChallenge
+            daily_challenge = DailyChallenge.objects.filter(challenge=guess.challenge).first()
+
+            # Only include guesses that have an associated DailyChallenge
+            if daily_challenge:
+                guess.daily_challenge = daily_challenge
+                recent_guesses_with_challenge.append(guess)
+
+        context['recent_guesses'] = recent_guesses_with_challenge
         return context
-    
+
     def test_func(self):
         return self.request.user.is_authenticated and not self.request.user.is_staff
+
 
 ##########################################################################3
 #Admin Views
