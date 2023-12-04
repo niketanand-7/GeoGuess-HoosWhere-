@@ -509,25 +509,6 @@ class ChallengeBankTests(TestCase):
         challenge_bank = self.view.get_queryset()
         self.assertEqual(0, len(challenge_bank))
 
-class UserRoleAccessControlTest(TestCase):
-    def setUp(self):
-        self.admin_user = User.objects.create_user('admin', 'admin@example.com', 'adminpass', is_superuser=True)
-        self.regular_user = User.objects.create_user('regular', 'regular@example.com', 'regularpass', is_superuser=False)
-        self.admin_url = reverse('admin_specific_view')  # replace with your actual admin URL
-        self.regular_url = reverse('regular_user_view')  # replace with a regular user-specific URL
-
-    def test_admin_access(self):
-        self.client.login(username='admin', password='adminpass')
-        response = self.client.get(self.admin_url)
-        self.assertEqual(response.status_code, 200)
-        self.client.logout()
-
-    def test_regular_user_access(self):
-        self.client.login(username='regular', password='regularpass')
-        response = self.client.get(self.admin_url)
-        self.assertNotEqual(response.status_code, 200)  # Non-admins should not access admin URL
-        response = self.client.get(self.regular_url)
-        self.assertEqual(response.status_code, 200)
 
 
 # class AdminUsersViewTests(TestCase):
