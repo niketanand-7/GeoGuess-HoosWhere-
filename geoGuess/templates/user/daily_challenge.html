@@ -24,7 +24,15 @@
         <div class="container text-center my-3">
             <div class="pb-2">
                 <h1> {{ DailyChallenge.timestamp|date:"F d, Y"}} </h1>
-                <h5> Challenge by {{Challenge.user}}</h5>   
+                <h5> Challenge by
+                    {% if Challenge.user.is_staff %}
+                        Admin
+                    {% else %}
+                        <a href="{% url 'profile' Challenge.user.id %}">
+                            {{ Challenge.user.first_name|default:Challenge.user.username }}
+                        </a>
+                    {% endif %}
+                </h5>
             </div>   
             <div class="row">
                 <div class="col-md-6">
@@ -41,6 +49,8 @@
         </div>
         <button type="submit" value="Submit" id="guessButton" class="btn btn-primary mt-3 mx-auto d-block">Make a Guess</button>
     </form>
+
+
     {% load static %}
       <!-- Google Maps Initialization -->
         <script>

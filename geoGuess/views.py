@@ -20,6 +20,8 @@ def rating_calc(average_score, games_played):
     weight = 0.8
     return int((weight * average_score) + ((1 - weight) * games_played * average_score))
 
+
+
 # Gets the leaderboard of players
 def get_leaderboard():
     user_list = User.objects.all()
@@ -67,8 +69,12 @@ def get_user_leaderboard_position(user):
             return index
     return None
 def get_recent_guesses(user):
-    guess_list = Guess.objects.filter(user=user)
-    return guess_list.order_by('-id')[:5]
+    guess_list = Guess.objects.filter(user=user).order_by('-id')[:5]
+    # This will add the daily_challenge information to each guess
+    for guess in guess_list:
+        guess.daily_challenge = DailyChallenge.objects.filter(challenge=guess.challenge).first()
+    return guess_list
+
 
 #Home View
 class Home(generic.TemplateView):
@@ -139,10 +145,35 @@ class DailyChallengeView(LoginRequiredMixin, UserPassesTestMixin, generic.Detail
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        daily_challenge = self.get_object()
+
+        """
+        Created with help from GPT 3, regarding linking users and their ids to help with profile redirection, ends at 
+        line 165.
+        """
+
+        challenge_creator = daily_challenge.challenge.user
+        context['challenge_creator_name'] = challenge_creator.first_name
+        context['challenge_creator_id'] = challenge_creator.id
+
+        leaderboard_ids = [player['id'] for player in daily_challenge.get_leaderboard()]
+
+        is_creator_in_leaderboard = daily_challenge.challenge.user.id in leaderboard_ids
+
+        context['is_creator_in_leaderboard'] = is_creator_in_leaderboard
+        context['challenge_creator'] = daily_challenge.challenge.user
+
+
+        context['daily_leaderboard'] = daily_challenge.get_leaderboard()
         context['maps_api_key'] = os.environ.get('GOOGLE_MAPS_API_KEY')
         # Sets information for the challenge being used
         context['Challenge'] = self.get_object().challenge
         context['DailyChallenge'] = DailyChallenge.objects.get(challenge=self.get_object().challenge)
+
+        # If the user has guessed, include the guess in the context
+        if self.request.user.is_authenticated:
+            guess = Guess.objects.filter(user=self.request.user, challenge=daily_challenge.challenge).first()
+            context['Guess'] = guess
 
         print(self.get_template_names())
         if 'user/daily_challenge_guessed.html' in self.get_template_names():
@@ -202,6 +233,7 @@ class LeaderboardView(LoginRequiredMixin, UserPassesTestMixin, generic.ListView)
     def test_func(self):
         return self.request.user.is_authenticated and not self.request.user.is_staff
 
+
 class ProfileView(generic.DetailView, UserPassesTestMixin):
     template_name = "user/profile.html"
     context_object_name = "user"
@@ -212,11 +244,24 @@ class ProfileView(generic.DetailView, UserPassesTestMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['stats'] = get_player_stats(self.get_object())
-        context['recent_guesses'] = get_recent_guesses(self.get_object())
+
+        # Retrieve the recent guesses and attach the related DailyChallenge
+        recent_guesses_with_challenge = []
+        for guess in get_recent_guesses(self.get_object()):
+            # Try to get the related DailyChallenge
+            daily_challenge = DailyChallenge.objects.filter(challenge=guess.challenge).first()
+
+            # Only include guesses that have an associated DailyChallenge
+            if daily_challenge:
+                guess.daily_challenge = daily_challenge
+                recent_guesses_with_challenge.append(guess)
+
+        context['recent_guesses'] = recent_guesses_with_challenge
         return context
-    
+
     def test_func(self):
         return self.request.user.is_authenticated and not self.request.user.is_staff
+
 
 ##########################################################################3
 #Admin Views

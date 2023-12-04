@@ -23,12 +23,12 @@ class HomeViewTest(TestCase):
     def setUp(self):
         self.client = Client()
         self.home_url = reverse('home')
-        
+
         # Create a test user and associated social account
         self.user = get_user_model().objects.create_user(username='testuser', password='testpassword')
         self.init_login_mock()
         app = SocialApp.objects.create(provider='google', name='google', client_id='123', secret='dummy')
-       
+
         from django.contrib.sites.models import Site
         site = Site.objects.create(domain='test.com', name='test.com')
         app.sites.add(site)
@@ -58,7 +58,8 @@ class HomeViewTest(TestCase):
         response = self.client.get(self.home_url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Login with Google')
-    #Tests the home view behavior for authenticated users.
+
+    # Tests the home view behavior for authenticated users.
     # It logs in a mock user, checks if the response status is 200, and looks for a welcoming message.
     def test_home_view_authenticated(self):
         # Simulating login with the mock user
@@ -66,6 +67,7 @@ class HomeViewTest(TestCase):
         response = self.client.get(self.home_url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Welcome,')
+
 
 class AddChallengeViewTest(TestCase):
 
@@ -80,11 +82,13 @@ class AddChallengeViewTest(TestCase):
         # Log in the regular user
         self.client.login(username='regular_user', password='password')
         self.challenge_url = reverse('challenge')
-#Tests if accessing the challenge view gives a status code of 200.
+
+    # Tests if accessing the challenge view gives a status code of 200.
     def test_add_challenge_view(self):
         response = self.client.get(self.challenge_url)
-        self.assertEqual(response.status_code, 200) #failing
+        self.assertEqual(response.status_code, 200)  # failing
         self.assertIn('maps_api_key', response.context)
+
 
 class AdminAuthTest(TestCase):
     def setUp(self):
@@ -96,11 +100,12 @@ class AdminAuthTest(TestCase):
         )
         # Log in the admin user
         self.client.login(username='admin_test', password='password123')
-        
+
     def test_admin_see_users_view(self):
         self.choice_url = reverse('admin_users')
         response = self.client.get(self.choice_url)
-        self.assertContains(response, self.admin_user.username) #checks that the usernames are displayed for admin user with higher auth level
+        self.assertContains(response,
+                            self.admin_user.username)  # checks that the usernames are displayed for admin user with higher auth level
 
     def test_admin_not_see_daily_challenge(self):
         self.choice_url = reverse('daily_challenge_list')
@@ -122,7 +127,7 @@ class AdminAuthTest(TestCase):
         response = self.client.get(self.choice_url)
         self.assertEqual(response.status_code, 403)
 
-    
+
 class RegularUserAuthTest(TestCase):
 
     def setUp(self):
@@ -138,9 +143,9 @@ class RegularUserAuthTest(TestCase):
     def test_regular_not_see_users_view(self):
         self.choice_url = reverse('admin_users')
         response = self.client.get(self.choice_url)
-        self.assertEqual(response.status_code, 403) #checks that regular user access this admin exclusive page
-        #should not have permission to access page
-    
+        self.assertEqual(response.status_code, 403)  # checks that regular user access this admin exclusive page
+        # should not have permission to access page
+
     def test_regular_not_see_approve_submissions(self):
         self.choice_url = reverse('approve_submissions')
         response = self.client.get(self.choice_url)
@@ -151,27 +156,30 @@ class RegularUserAuthTest(TestCase):
         response = self.client.get(self.choice_url)
         self.assertEqual(response.status_code, 403)
 
+
 class ChallengeModelTest(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='testuser', password='test')
-        self.challenge = Challenge.objects.create(user=self.user,latitude=38,longitude=-78.3)
+        self.challenge = Challenge.objects.create(user=self.user, latitude=38, longitude=-78.3)
+
     def test_add_challenge_view(self):
         image_path = "geoGuess/static/chemistryBuilding_image.jpg"
-        response = self.client.post(reverse('challenge'), data =
+        response = self.client.post(reverse('challenge'), data=
         {
             'image': SimpleUploadedFile(name='test_image.jpg', content=open(image_path, 'rb').read(),
                                         content_type='image/jpeg'),
             "longitude": -78.32,
             "latitude": 32.133
         })
-        self.assertEqual(response.status_code, 302) #redirecting page
-        self.assertEqual(Challenge.objects.count(), 1) #checking if Challenge can be added
-    #tests adding challenge with no marker    
+        self.assertEqual(response.status_code, 302)  # redirecting page
+        self.assertEqual(Challenge.objects.count(), 1)  # checking if Challenge can be added
+
+    # tests adding challenge with no marker
     def test_add_challenge_view_no_marker(self):
-        self.client.login(username='testuser',password='test')
-        response = self.client.post(reverse('challenge')) #no data
-        Challenge.objects.all().delete() #deleting object from previous test
-        self.assertEqual(Challenge.objects.count(), 0) #checking if Challenge is be added w/ no data
+        self.client.login(username='testuser', password='test')
+        response = self.client.post(reverse('challenge'))  # no data
+        Challenge.objects.all().delete()  # deleting object from previous test
+        self.assertEqual(Challenge.objects.count(), 0)  # checking if Challenge is be added w/ no data
 
     def test_challenge_form_valid(self):
         image_path = "geoGuess/static/chemistryBuilding_image.jpg"
@@ -181,8 +189,8 @@ class ChallengeModelTest(TestCase):
             'longitude': -78.32,
             'latitude': 32.133,
         }
-        form = ChallengeForm(data=form_data,files=form_data)
-        self.assertTrue(form.is_valid(),form.as_table())
+        form = ChallengeForm(data=form_data, files=form_data)
+        self.assertTrue(form.is_valid(), form.as_table())
 
     def test_challenge_form_invalid(self):
         form_data = {
@@ -206,7 +214,6 @@ class ChallengeEdgeCaseTest(TestCase):
         # Test that extreme values do not break the application.
 
 
-
 class ChallengeTransactionTest(TestCase):
     def test_challenge_creation_transaction(self):
         with transaction.atomic():
@@ -219,6 +226,7 @@ class ChallengeTransactionTest(TestCase):
                 pass
         # The first Challenge should not be saved due to the atomic block.
         self.assertEqual(Challenge.objects.count(), 0)
+
 
 class ChallengeGuessIntegrationTest(TestCase):
     def setUp(self):
@@ -254,7 +262,7 @@ class GuessModelTestCase(TestCase):
         self.challenge = Challenge.objects.create(
             user=self.user,
             image='path/to/image.jpg',
-            longitude=38.031587943575246, 
+            longitude=38.031587943575246,
             latitude=-78.5108602729666,
             approve_status=True
         )
@@ -263,7 +271,7 @@ class GuessModelTestCase(TestCase):
         guess = Guess.objects.create(
             user=self.user,
             challenge=self.challenge,
-            longitude=38.031587943575246, 
+            longitude=38.031587943575246,
             latitude=-78.5108602729666,
         )
 
@@ -279,7 +287,7 @@ class GuessModelTestCase(TestCase):
         guess = Guess.objects.create(
             user=self.user,
             challenge=self.challenge,
-            longitude=38.03158534376525, 
+            longitude=38.03158534376525,
             latitude=-78.5107887739817
         )
 
@@ -295,14 +303,14 @@ class GuessModelTestCase(TestCase):
         guess = Guess.objects.create(
             user=self.user,
             challenge=self.challenge,
-            longitude=43.02239253427242, 
+            longitude=43.02239253427242,
             latitude=-67.16129125101716
         )
         guess.save()
 
         updated_guess = Guess.objects.get(pk=guess.pk)
-        updated_guess.longitude=38.134471800228155 
-        updated_guess.latitude=-78.50693744045769
+        updated_guess.longitude = 38.134471800228155
+        updated_guess.latitude = -78.50693744045769
 
         updated_guess.save()
         # Check that the fields have been updated correctly
@@ -313,14 +321,14 @@ class GuessModelTestCase(TestCase):
         guess = Guess.objects.create(
             user=self.user,
             challenge=self.challenge,
-            longitude=38.031587943575246, 
+            longitude=38.031587943575246,
             latitude=-78.5108602729666,
         )
         guess.save()
 
         updated_guess = Guess.objects.get(pk=guess.pk)
-        updated_guess.longitude=38.03154885863617 
-        updated_guess.latitude=-78.50987120841747
+        updated_guess.longitude = 38.03154885863617
+        updated_guess.latitude = -78.50987120841747
 
         updated_guess.save()
 
@@ -386,6 +394,7 @@ class GuessRelationTestCase(TestCase):
         with self.assertRaises(Guess.DoesNotExist):
             Guess.objects.get(pk=self.guess.pk)
 
+
 class LeaderBoardTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
@@ -414,31 +423,34 @@ class LeaderBoardTests(TestCase):
     def test_leaderboard_with_no_guesses(self):
         self.guess.delete()
         leaderboard = self.view.get_queryset()
-        self.assertEqual(0,len(leaderboard))
+        self.assertEqual(0, len(leaderboard))
 
     def test_leaderboard_with_two_guesses_with_new_guess_with_higher_score(self):
         new_user = User.objects.create_user('testuser2', 'test2@example.com', 'password123')
         new_guess = Guess.objects.create(
             user=new_user,
             challenge=self.challenge,
-            score= 500,
+            score=500,
         )
         leaderboard = self.view.get_queryset()
-        self.assertEqual(2,len(leaderboard))
-        self.assertEqual(new_guess.score,leaderboard[0]["average_score"]) #checks to make sure leaderboard order is correct
-        self.assertEqual(self.guess.score,leaderboard[1]["average_score"])
+        self.assertEqual(2, len(leaderboard))
+        self.assertEqual(new_guess.score,
+                         leaderboard[0]["average_score"])  # checks to make sure leaderboard order is correct
+        self.assertEqual(self.guess.score, leaderboard[1]["average_score"])
 
     def test_leaderboard_with_two_guesses_with_new_guess_with_lower_score(self):
         new_user = User.objects.create_user('testuser2', 'test2@example.com', 'password123')
         new_guess = Guess.objects.create(
             user=new_user,
             challenge=self.challenge,
-            score= 100,
+            score=100,
         )
         leaderboard = self.view.get_queryset()
-        self.assertEqual(2,len(leaderboard))
-        self.assertEqual(new_guess.score,leaderboard[1]["average_score"]) #checks to make sure leaderboard order is correct
-        self.assertEqual(self.guess.score,leaderboard[0]["average_score"])
+        self.assertEqual(2, len(leaderboard))
+        self.assertEqual(new_guess.score,
+                         leaderboard[1]["average_score"])  # checks to make sure leaderboard order is correct
+        self.assertEqual(self.guess.score, leaderboard[0]["average_score"])
+
 
 class AddingDailyChallengeTests(TestCase):
     def setUp(self):
@@ -454,13 +466,14 @@ class AddingDailyChallengeTests(TestCase):
     def test_add_daily_challenge_success(self):
         out = StringIO()
         call_command('add_daily_challenge', stdout=out)
-        self.assertIn('Daily challenge added successfully.',out.getvalue())
+        self.assertIn('Daily challenge added successfully.', out.getvalue())
 
     def test_add_daily_challenge_fail(self):
         self.challenge.delete()
         out = StringIO()
         call_command('add_daily_challenge', stdout=out)
         self.assertIn('No challenges to add.', out.getvalue())
+
 
 class ChallengeBankTests(TestCase):
     def setUp(self):
@@ -491,10 +504,12 @@ class ChallengeBankTests(TestCase):
 
     def test_challengeBank_empty(self):
         out = StringIO()
-        call_command('add_daily_challenge', stdout = out)
+        call_command('add_daily_challenge', stdout=out)
         self.assertIn('Daily challenge added successfully.', out.getvalue())
         challenge_bank = self.view.get_queryset()
         self.assertEqual(0, len(challenge_bank))
+
+
 
 # class AdminUsersViewTests(TestCase):
 #     def setUp(self):
@@ -512,7 +527,6 @@ class ChallengeBankTests(TestCase):
 #             approve_status=True
 #         )
 #         self.factory = RequestFactory()
-
 
 
 
