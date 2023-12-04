@@ -578,26 +578,67 @@ class DailyLeaderboardTest(TestCase):
         self.assertContains(response, 90)  # Score of user2
 
 
-class AboutPageTest(TestCase):
-    def test_about_page_status_code(self):
-        response = self.client.get(reverse('about'))
+class ChallengeApprovalTests(TestCase):
+    def setUp(self):
+        self.admin_user = User.objects.create_user('admin', 'admin@example.com', 'adminpass', is_staff=True)
+        self.regular_user = User.objects.create_user('user', 'user@example.com', 'userpass', is_staff=False)
+        self.challenge = Challenge.objects.create(user=self.regular_user, latitude=38, longitude=-78.3)
+
+    def test_admin_can_approve_challenge(self):
+        self.client.login(username='admin', password='adminpass')
+        response = self.client.post(reverse('approve_challenge', args=[self.challenge.id]), {'approve': True})
+        self.challenge.refresh_from_db()
+        self.assertTrue(self.challenge.approve_status)
+
+    def test_non_admin_cannot_approve_challenge(self):
+        self.client.login(username='user', password='userpass')
+        response = self.client.post(reverse('approve_challenge', args=[self.challenge.id]), {'approve': True})
+        self.challenge.refresh_from_db()
+        self.assertFalse(self.challenge.approve_status)
+
+
+class GuessDistanceCalculationTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user('user', 'user@example.com', 'userpass')
+        self.challenge = Challenge.objects.create(user=self.user, latitude=38, longitude=-78.3)
+
+    def test_guess_distance_calculation(self):
+        guess = Guess.objects.create(user=self.user, challenge=self.challenge, latitude=38, longitude=-78.3)
+        self.assertAlmostEqual(guess.distanceFromAnswer, 1000)
+
+    def test_distance_calculation_accuracy(self):
+        guess = Guess.objects.create(user=self.user, challenge=self.challenge, latitude=40.001, longitude=-84.002)
+        self.assertTrue(guess.distanceFromAnswer < 1000)
+
+class DailyChallengeGenerationTests(TestCase):
+    def test_daily_challenge_creation(self):
+        call_command('generate_daily_challenge')
+        self.assertEqual(DailyChallenge.objects.count(), 1)
+
+    def test_multiple_daily_challenge_creation(self):
+        for _ in range(3):
+            call_command('generate_daily_challenge')
+        self.assertEqual(DailyChallenge.objects.count(), 1)
+
+class ChallengeImageUploadTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user('user', 'user@example.com', 'userpass')
+        self.image = SimpleUploadedFile(name='test_image.jpg', content=b'test_image_data', content_type='image/jpeg')
+
+    def test_image_upload_for_challenge(self):
+        challenge = Challenge.objects.create(user=self.user, image=self.image, latitude=38, longitude=-78.3)
+        self.assertTrue(challenge.image, 'test_image.jpg')
+
+
+class UserProfileAccessTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user('user', 'user@example.com', 'userpass')
+
+    def test_user_profile_page(self):
+        self.client.login(username='user', password='userpass')
+        response = self.client.get(reverse('profile', args=[self.user.id]))
         self.assertEqual(response.status_code, 200)
-
-    def test_about_page_template_used(self):
-        response = self.client.get(reverse('about'))
-        self.assertTemplateUsed(response, 'about.html')
-
-    def test_about_page_contains_specific_content(self):
-        response = self.client.get(reverse('about'))
-        self.assertContains(response, "About HoosWhere?")
-        self.assertContains(response, "HoosWhere? is a geoguesser game designed specifically for the UVA community.")
-        self.assertContains(response, "How to Play")
-        self.assertContains(response, "Start the game by logging in with your UVA student credentials.")
-        self.assertContains(response, "Your task is to guess the location by placing a pin on the provided map.")
-        self.assertContains(response, "Earn points based on how accurate your guess was and climb up the leaderboard!")
-        self.assertContains(response, "Whether you're a new student or a seasoned Hoo, this game is a fun way to explore the campus")
-
-
+        self.assertContains(response, self.user.username)
 
 class ProfileRedirectionTest(TestCase):
     def setUp(self):

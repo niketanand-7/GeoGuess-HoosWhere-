@@ -20,6 +20,8 @@ def rating_calc(average_score, games_played):
     weight = 0.8
     return int((weight * average_score) + ((1 - weight) * games_played * average_score))
 
+
+
 # Gets the leaderboard of players
 def get_leaderboard():
     user_list = User.objects.all()
@@ -144,6 +146,19 @@ class DailyChallengeView(LoginRequiredMixin, UserPassesTestMixin, generic.Detail
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         daily_challenge = self.get_object()
+
+        challenge_creator = daily_challenge.challenge.user
+        context['challenge_creator_name'] = challenge_creator.first_name
+        context['challenge_creator_id'] = challenge_creator.id
+
+        leaderboard_ids = [player['id'] for player in daily_challenge.get_leaderboard()]
+
+        is_creator_in_leaderboard = daily_challenge.challenge.user.id in leaderboard_ids
+
+        context['is_creator_in_leaderboard'] = is_creator_in_leaderboard
+        context['challenge_creator'] = daily_challenge.challenge.user
+
+
         context['daily_leaderboard'] = daily_challenge.get_leaderboard()
         context['maps_api_key'] = os.environ.get('GOOGLE_MAPS_API_KEY')
         # Sets information for the challenge being used
