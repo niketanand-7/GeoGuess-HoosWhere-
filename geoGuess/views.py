@@ -147,6 +147,11 @@ class DailyChallengeView(LoginRequiredMixin, UserPassesTestMixin, generic.Detail
         context = super().get_context_data(**kwargs)
         daily_challenge = self.get_object()
 
+        """
+        Created with help from GPT 3, regarding linking users and their ids to help with profile redirection, ends at 
+        line 165.
+        """
+
         challenge_creator = daily_challenge.challenge.user
         context['challenge_creator_name'] = challenge_creator.first_name
         context['challenge_creator_id'] = challenge_creator.id
